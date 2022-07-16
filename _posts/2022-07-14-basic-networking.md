@@ -1,12 +1,12 @@
 ---
 layout: post
-author: matt
 excerpt_separator: <!--more-->
 ---
 
 Notes on networking. The absolute basics.
 
 <!--more-->
+
 Based on CompTIA A+ 220-100.
 
 [Wikipedia OSI Model](https://en.wikipedia.org/wiki/OSI_model)

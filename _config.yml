@@ -1,6 +1,3 @@
-collections:
-  authors:
-
 plugins:
   - jekyll-feed
   - jekyll-sitemap
