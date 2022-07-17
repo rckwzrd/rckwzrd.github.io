@@ -1,4 +1,13 @@
+theme: minima
+
+minima:
+  date_format: "%b %-d, %Y"
+
+title: Rckwzrd's Reference
+description: Function over form.
+
 plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+
