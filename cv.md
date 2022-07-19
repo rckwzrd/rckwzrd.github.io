@@ -1,8 +1,6 @@
 ---
 layout: page
-title: CV Title
+title: CV
 ---
-
-# CV page
 
 This is a CV page.

@@ -52,9 +52,11 @@ $on-laptop:        800px !default;
 
 .simple-footer {
    border-top: 1px solid $grey-color-light;
-   padding: $spacing-unit / 10;
+   padding: $spacing-unit / 2;
 } 
 
 .footer-color {
     color: $grey-color;
+    margin-top: $spacing-unit / 2;
+    margin-bottom: $spacing-unit / 2;
 }

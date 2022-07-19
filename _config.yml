@@ -4,7 +4,8 @@ minima:
   date_format: "%b %-d, %Y"
 
 title: Rckwzrd's Reference
-description: Function over form.
+description: Matt Rhoads |
+contact: mrhoads1@gmail.com
 
 plugins:
   - jekyll-feed
