@@ -1,6 +1,6 @@
 ---
-layout: default
-title: About
+layout: page
+title: About Title
 ---
 
 # About page
