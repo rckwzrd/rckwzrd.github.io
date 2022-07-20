@@ -1,4 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-07-19T14:19:30-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Basic Networking</title><link href="http://localhost:4000/2022/07/14/basic-networking.html" rel="alternate" type="text/html" title="Basic Networking" /><published>2022-07-14T00:00:00-05:00</published><updated>2022-07-14T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/14/basic-networking</id><content type="html" xml:base="http://localhost:4000/2022/07/14/basic-networking.html"><![CDATA[<p>Notes on networking. The absolute basics.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-07-19T21:06:01-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Five Rules For Whitebelts</title><link href="http://localhost:4000/2022/07/19/Five-Rules-For-Whitebelts.html" rel="alternate" type="text/html" title="Five Rules For Whitebelts" /><published>2022-07-19T00:00:00-05:00</published><updated>2022-07-19T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/19/Five-Rules-For-Whitebelts</id><content type="html" xml:base="http://localhost:4000/2022/07/19/Five-Rules-For-Whitebelts.html"><![CDATA[<p>The book <a href="https://www.goodreads.com/en/book/show/38841408-5-rules-for-white-belts">5 Rules for White Belts</a> provides a useful conceptual framework for learning Jiu Jitsu.</p>
+
+<p>Below are a notes for each rule in framework.</p>
+
+<h2 id="rule-1-you-are-a-work-in-progress">Rule 1: You are a Work In Progress</h2>
+
+<p>Be ok with getting crushed. Failure can be used.</p>
+
+<p>Every session has a choice:</p>
+
+<ol>
+  <li>Way of comfort</li>
+  <li>Way of growth</li>
+</ol>
+
+<p>The choices exist in tension. Comfort provides success and feeds the ego. Growth risks failure but allows for new skills to develop.</p>
+
+<p>Failure must be embraced and risks taken in order to advance. Seek out purposeful failure while training in order to grow. Be ok with getting crushed.</p>
+
+<h2 id="rule-2-narrow-the-immediate-focus">Rule 2: Narrow the immediate focus</h2>
+
+<p>Focus on the four basic positions of Jiu Jitsu:</p>
+
+<ol>
+  <li>guard</li>
+  <li>side control</li>
+  <li>mount</li>
+  <li>back</li>
+</ol>
+
+<p>These positions exist in a heirarchy of dominance:</p>
+
+<ul>
+  <li>you have partners back</li>
+  <li>you are on top in mount</li>
+  <li>you are on top in side control</li>
+  <li>you are on top in guard</li>
+  <li></li>
+  <li>you are on bottom in guard</li>
+  <li>your partner has side control</li>
+  <li>your partner has the mount</li>
+  <li>your partner has your back</li>
+</ul>
+
+<p>The heiracrhy is a ladder that is climbed by both players while sparring. The goal is to ascend and increase control over the other player. The upper half of the ladder is generally offensive, while the lower half is defensive.</p>
+
+<p>Techniques are the tools used to ascend the ladder:</p>
+
+<ul>
+  <li>Reversals</li>
+  <li>Guard recoveries</li>
+  <li>Sweeps</li>
+  <li>Guard Passes</li>
+</ul>
+
+<p>The near term goal is to learn how to efficiently use tools to navigate the ladder. Submissions will come later.</p>
+
+<h2 id="rule-3-learn-how-to-learn">Rule 3: Learn how to learn</h2>
+
+<p>Seeing techniques for what they are</p>
+
+<p>Ask questions</p>
+
+<p>Keep a notebook</p>
+
+<p>Understanding through communication</p>
+
+<h2 id="rule-4-be-greatful-for-your-teammates">Rule 4: Be greatful for your teammates</h2>
+
+<h2 id="rule-5-jiu-jitsu-is-a-vehicle-for-something-more">Rule 5: Jiu Jitsu is a vehicle for something more</h2>]]></content><author><name></name></author><summary type="html"><![CDATA[The book 5 Rules for White Belts provides a useful conceptual framework for learning Jiu Jitsu. Below are a notes for each rule in framework. Rule 1: You are a Work In Progress Be ok with getting crushed. Failure can be used. Every session has a choice: Way of comfort Way of growth The choices exist in tension. Comfort provides success and feeds the ego. Growth risks failure but allows for new skills to develop. Failure must be embraced and risks taken in order to advance. Seek out purposeful failure while training in order to grow. Be ok with getting crushed. Rule 2: Narrow the immediate focus Focus on the four basic positions of Jiu Jitsu: guard side control mount back These positions exist in a heirarchy of dominance: you have partners back you are on top in mount you are on top in side control you are on top in guard you are on bottom in guard your partner has side control your partner has the mount your partner has your back The heiracrhy is a ladder that is climbed by both players while sparring. The goal is to ascend and increase control over the other player. The upper half of the ladder is generally offensive, while the lower half is defensive. Techniques are the tools used to ascend the ladder: Reversals Guard recoveries Sweeps Guard Passes The near term goal is to learn how to efficiently use tools to navigate the ladder. Submissions will come later. Rule 3: Learn how to learn Seeing techniques for what they are Ask questions Keep a notebook Understanding through communication Rule 4: Be greatful for your teammates Rule 5: Jiu Jitsu is a vehicle for something more]]></summary></entry><entry><title type="html">Basic Networking</title><link href="http://localhost:4000/2022/07/14/basic-networking.html" rel="alternate" type="text/html" title="Basic Networking" /><published>2022-07-14T00:00:00-05:00</published><updated>2022-07-14T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/14/basic-networking</id><content type="html" xml:base="http://localhost:4000/2022/07/14/basic-networking.html"><![CDATA[<p>Notes on networking. The absolute basics.</p>
 
 <!--more-->
 
