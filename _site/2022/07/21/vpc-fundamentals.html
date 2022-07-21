@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Vpc Fundamentals | Rckwzrd’s Reference</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Vpc Fundamentals" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Notes on the AWS Virtual Private Cloud (VPC) service. Fundamental features and links to related topics. Links: AWS VPC docs Internet protocol suite Cloud computing IPv4 IPv6 CIDR VPC overview Networks defined in aws cloud isolated software defined networking custom IPv4/v6 address range multiple subnets routing table configuration network address translation (NAT gateway) created with console, CLI, or IaC security and firewalls Security groups associated with EC2, allow rules stateful Network ACLs associated with VPCs/subnets allow and deny rules stateless VPC deployment options Plan cloud network number and location of networks/subnets traffic control in and out remote ssh for admin public web app in subnet port 80/443 IPv4 address ranges CIDR notation /16 /24 network isolation/connectivity test vpc sandbox resources in network subnet for public front end subnet for private back end database VPC Deployment Options VPC with a single public subnet VPC with public and private subnets VPC with public and private subnets and hardware VPN VPC with private subnet and hardware vpn VPC with a single public subnet create one subnet and internet gateway subnet resources are open to the internet elastic and public IPs control traffic with ACLs and security groups VPC with public and private subnets one public and one private subnet used for multi tier applicatoins public subnet for front end private subnet for back end private resources do not have direct outbound internet access NAT in public subnet for indirect VPC with public and private subnets and hardware VPN VPN links on premise network to aws IPsec VPN tunnel aws manages cloud side vpn configuration user must configure on premise vpn on premise traffic to aws elastic Ip traverse internet, not VPN aws private subnet traffic routed to on premise network via VPN VPC with private subnet and hardware vpn no internet gateway no internet connectivity extend on premise network into aws vpn links on premise network to cloud IPsec vpn tunnel manage vpn on both ends VPC networking components VPCs will contain a set of components subnets route tables network interfaces elastic IP address NAT and internet gateways Subnets contained with vpc created within an AZ ip address range falls within vpc range auto assign ipv4 public ip ec2 instances deployed into subnets associated with network ACLs allow/deny inbound/outbound network traffic flow associated with route tables Route tables routing control internet gateways 0.0.0.0/0 default route virtual firewall appliances on premise networks through vpn or direct connect vpc peering private traffic between vpcs Network interfaces elastic network interface attached / detached from instances subnet set at create time auto mac address ip addressing ipv4 or ipv6 static or dynamic assignment security groups associated with interface Elastic ip address static ipv4 address linked to aws account associated with ec2 instance network interface release ip if not needed cost $ to use Gateways Network address translation (NAT) allow internet connectivity from private subnet connections from internet not allowed only responses from internet allowed modify subnet route tables to use NAT Internet gateway provides subnet access to internet connections from internet allowed modify subnet route tables to use internet IP addressing and subnets Plan out ip addressing prior to vpc and resource deployment. CIDR notation ip address visibility public, reachable from internet private, used within vpcs aws supports ipv4 and ipv6 ip addresses associated with network interfaces statically or dynamically assigned ec2 instances recieve an internal dns hostname example: ip-10-23-55-1.ec2.internal resolvable only within vpc sunet new ec2 instances receive a private ip from subnet is occupies address constant between reboots address released when instance is terminated auto assign public ip option Create a VPC Create vpc through aws console configuration wizard old console style ip cidr range and block route table and dns acl and security group subnets Automate deployment of infrastructure Deployment tools powershell (lol) aws cli api, boto3 cloud formation IaC aws elastic beanstalk and ops works Cloudformation IaC template file json with passed parameters custom or preconfigured related resources deployed quickly Beanstalk application infrastructure orchestration service do not provision individual resources upload applications in different languages OpsWorks centralized application cofiguration managment chef and puppet no manual ec2 configuration automate instance deployment, configuration, and management applications consist of stacks, resources layers, configuration Security groups and network ACLs Security group stateful firewall supports allow rules tracks state of connection associated with network interfaces attached to ec2 consists of acl allow rules similiar to a traditional firewall determine how many security groups firewall pools one group can be associated withn many interfaces consistent naming and taging track security Network ACLs associated with vpc subnets support both allow and deny rules stateless firewall return traffic is not allowed automatically Implement security groups ec2 console network and security security groups give name, description, vpc, rules, tags type, protocol, port, source statefull firewall do not have to define inbound and outbound rules Create internet gateway allow access to internet for vpc deployed resources vpc dashboard subnets internet gateway state: attached, detached route table connect internet gateway to subnet Implement network ACLs perimeter in and out bound traffic control vpc dashboard security network ACLs name and vpc default deny all in and out bound edit vpc nacl association VPC connectivity options VPC peering connectivity between vpc different regions and accounts no vpn ec2 in different vpc communicate single vpc peered with multiple vps no transitive peering" />
+<meta property="og:description" content="Notes on the AWS Virtual Private Cloud (VPC) service. Fundamental features and links to related topics. Links: AWS VPC docs Internet protocol suite Cloud computing IPv4 IPv6 CIDR VPC overview Networks defined in aws cloud isolated software defined networking custom IPv4/v6 address range multiple subnets routing table configuration network address translation (NAT gateway) created with console, CLI, or IaC security and firewalls Security groups associated with EC2, allow rules stateful Network ACLs associated with VPCs/subnets allow and deny rules stateless VPC deployment options Plan cloud network number and location of networks/subnets traffic control in and out remote ssh for admin public web app in subnet port 80/443 IPv4 address ranges CIDR notation /16 /24 network isolation/connectivity test vpc sandbox resources in network subnet for public front end subnet for private back end database VPC Deployment Options VPC with a single public subnet VPC with public and private subnets VPC with public and private subnets and hardware VPN VPC with private subnet and hardware vpn VPC with a single public subnet create one subnet and internet gateway subnet resources are open to the internet elastic and public IPs control traffic with ACLs and security groups VPC with public and private subnets one public and one private subnet used for multi tier applicatoins public subnet for front end private subnet for back end private resources do not have direct outbound internet access NAT in public subnet for indirect VPC with public and private subnets and hardware VPN VPN links on premise network to aws IPsec VPN tunnel aws manages cloud side vpn configuration user must configure on premise vpn on premise traffic to aws elastic Ip traverse internet, not VPN aws private subnet traffic routed to on premise network via VPN VPC with private subnet and hardware vpn no internet gateway no internet connectivity extend on premise network into aws vpn links on premise network to cloud IPsec vpn tunnel manage vpn on both ends VPC networking components VPCs will contain a set of components subnets route tables network interfaces elastic IP address NAT and internet gateways Subnets contained with vpc created within an AZ ip address range falls within vpc range auto assign ipv4 public ip ec2 instances deployed into subnets associated with network ACLs allow/deny inbound/outbound network traffic flow associated with route tables Route tables routing control internet gateways 0.0.0.0/0 default route virtual firewall appliances on premise networks through vpn or direct connect vpc peering private traffic between vpcs Network interfaces elastic network interface attached / detached from instances subnet set at create time auto mac address ip addressing ipv4 or ipv6 static or dynamic assignment security groups associated with interface Elastic ip address static ipv4 address linked to aws account associated with ec2 instance network interface release ip if not needed cost $ to use Gateways Network address translation (NAT) allow internet connectivity from private subnet connections from internet not allowed only responses from internet allowed modify subnet route tables to use NAT Internet gateway provides subnet access to internet connections from internet allowed modify subnet route tables to use internet IP addressing and subnets Plan out ip addressing prior to vpc and resource deployment. CIDR notation ip address visibility public, reachable from internet private, used within vpcs aws supports ipv4 and ipv6 ip addresses associated with network interfaces statically or dynamically assigned ec2 instances recieve an internal dns hostname example: ip-10-23-55-1.ec2.internal resolvable only within vpc sunet new ec2 instances receive a private ip from subnet is occupies address constant between reboots address released when instance is terminated auto assign public ip option Create a VPC Create vpc through aws console configuration wizard old console style ip cidr range and block route table and dns acl and security group subnets Automate deployment of infrastructure Deployment tools powershell (lol) aws cli api, boto3 cloud formation IaC aws elastic beanstalk and ops works Cloudformation IaC template file json with passed parameters custom or preconfigured related resources deployed quickly Beanstalk application infrastructure orchestration service do not provision individual resources upload applications in different languages OpsWorks centralized application cofiguration managment chef and puppet no manual ec2 configuration automate instance deployment, configuration, and management applications consist of stacks, resources layers, configuration Security groups and network ACLs Security group stateful firewall supports allow rules tracks state of connection associated with network interfaces attached to ec2 consists of acl allow rules similiar to a traditional firewall determine how many security groups firewall pools one group can be associated withn many interfaces consistent naming and taging track security Network ACLs associated with vpc subnets support both allow and deny rules stateless firewall return traffic is not allowed automatically Implement security groups ec2 console network and security security groups give name, description, vpc, rules, tags type, protocol, port, source statefull firewall do not have to define inbound and outbound rules Create internet gateway allow access to internet for vpc deployed resources vpc dashboard subnets internet gateway state: attached, detached route table connect internet gateway to subnet Implement network ACLs perimeter in and out bound traffic control vpc dashboard security network ACLs name and vpc default deny all in and out bound edit vpc nacl association VPC connectivity options VPC peering connectivity between vpc different regions and accounts no vpn ec2 in different vpc communicate single vpc peered with multiple vps no transitive peering" />
+<link rel="canonical" href="http://localhost:4000/2022/07/21/vpc-fundamentals.html" />
+<meta property="og:url" content="http://localhost:4000/2022/07/21/vpc-fundamentals.html" />
+<meta property="og:site_name" content="Rckwzrd’s Reference" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-07-21T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Vpc Fundamentals" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-07-21T00:00:00-05:00","datePublished":"2022-07-21T00:00:00-05:00","description":"Notes on the AWS Virtual Private Cloud (VPC) service. Fundamental features and links to related topics. Links: AWS VPC docs Internet protocol suite Cloud computing IPv4 IPv6 CIDR VPC overview Networks defined in aws cloud isolated software defined networking custom IPv4/v6 address range multiple subnets routing table configuration network address translation (NAT gateway) created with console, CLI, or IaC security and firewalls Security groups associated with EC2, allow rules stateful Network ACLs associated with VPCs/subnets allow and deny rules stateless VPC deployment options Plan cloud network number and location of networks/subnets traffic control in and out remote ssh for admin public web app in subnet port 80/443 IPv4 address ranges CIDR notation /16 /24 network isolation/connectivity test vpc sandbox resources in network subnet for public front end subnet for private back end database VPC Deployment Options VPC with a single public subnet VPC with public and private subnets VPC with public and private subnets and hardware VPN VPC with private subnet and hardware vpn VPC with a single public subnet create one subnet and internet gateway subnet resources are open to the internet elastic and public IPs control traffic with ACLs and security groups VPC with public and private subnets one public and one private subnet used for multi tier applicatoins public subnet for front end private subnet for back end private resources do not have direct outbound internet access NAT in public subnet for indirect VPC with public and private subnets and hardware VPN VPN links on premise network to aws IPsec VPN tunnel aws manages cloud side vpn configuration user must configure on premise vpn on premise traffic to aws elastic Ip traverse internet, not VPN aws private subnet traffic routed to on premise network via VPN VPC with private subnet and hardware vpn no internet gateway no internet connectivity extend on premise network into aws vpn links on premise network to cloud IPsec vpn tunnel manage vpn on both ends VPC networking components VPCs will contain a set of components subnets route tables network interfaces elastic IP address NAT and internet gateways Subnets contained with vpc created within an AZ ip address range falls within vpc range auto assign ipv4 public ip ec2 instances deployed into subnets associated with network ACLs allow/deny inbound/outbound network traffic flow associated with route tables Route tables routing control internet gateways 0.0.0.0/0 default route virtual firewall appliances on premise networks through vpn or direct connect vpc peering private traffic between vpcs Network interfaces elastic network interface attached / detached from instances subnet set at create time auto mac address ip addressing ipv4 or ipv6 static or dynamic assignment security groups associated with interface Elastic ip address static ipv4 address linked to aws account associated with ec2 instance network interface release ip if not needed cost $ to use Gateways Network address translation (NAT) allow internet connectivity from private subnet connections from internet not allowed only responses from internet allowed modify subnet route tables to use NAT Internet gateway provides subnet access to internet connections from internet allowed modify subnet route tables to use internet IP addressing and subnets Plan out ip addressing prior to vpc and resource deployment. CIDR notation ip address visibility public, reachable from internet private, used within vpcs aws supports ipv4 and ipv6 ip addresses associated with network interfaces statically or dynamically assigned ec2 instances recieve an internal dns hostname example: ip-10-23-55-1.ec2.internal resolvable only within vpc sunet new ec2 instances receive a private ip from subnet is occupies address constant between reboots address released when instance is terminated auto assign public ip option Create a VPC Create vpc through aws console configuration wizard old console style ip cidr range and block route table and dns acl and security group subnets Automate deployment of infrastructure Deployment tools powershell (lol) aws cli api, boto3 cloud formation IaC aws elastic beanstalk and ops works Cloudformation IaC template file json with passed parameters custom or preconfigured related resources deployed quickly Beanstalk application infrastructure orchestration service do not provision individual resources upload applications in different languages OpsWorks centralized application cofiguration managment chef and puppet no manual ec2 configuration automate instance deployment, configuration, and management applications consist of stacks, resources layers, configuration Security groups and network ACLs Security group stateful firewall supports allow rules tracks state of connection associated with network interfaces attached to ec2 consists of acl allow rules similiar to a traditional firewall determine how many security groups firewall pools one group can be associated withn many interfaces consistent naming and taging track security Network ACLs associated with vpc subnets support both allow and deny rules stateless firewall return traffic is not allowed automatically Implement security groups ec2 console network and security security groups give name, description, vpc, rules, tags type, protocol, port, source statefull firewall do not have to define inbound and outbound rules Create internet gateway allow access to internet for vpc deployed resources vpc dashboard subnets internet gateway state: attached, detached route table connect internet gateway to subnet Implement network ACLs perimeter in and out bound traffic control vpc dashboard security network ACLs name and vpc default deny all in and out bound edit vpc nacl association VPC connectivity options VPC peering connectivity between vpc different regions and accounts no vpn ec2 in different vpc communicate single vpc peered with multiple vps no transitive peering","headline":"Vpc Fundamentals","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/07/21/vpc-fundamentals.html"},"url":"http://localhost:4000/2022/07/21/vpc-fundamentals.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Rckwzrd&apos;s Reference" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Rckwzrd&#39;s Reference</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/cv.html">CV</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Vpc Fundamentals</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2022-07-21T00:00:00-05:00" itemprop="datePublished">Jul 21, 2022
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Notes on the AWS Virtual Private Cloud (VPC) service.</p>
+
+<p>Fundamental features and links to related topics.</p>
+
+<p>Links:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/vpc/?id=docs_gateway">AWS VPC docs</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Internet_protocol_suite">Internet protocol suite</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Cloud_computing">Cloud computing</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/IPv4">IPv4</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/IPv6">IPv6</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing">CIDR</a></li>
+</ul>
+
+<h2 id="vpc-overview">VPC overview</h2>
+
+<p>Networks defined in aws cloud</p>
+
+<ul>
+  <li>isolated software defined networking</li>
+  <li>custom IPv4/v6 address range</li>
+  <li>multiple subnets</li>
+  <li>routing table configuration</li>
+  <li>network address translation (NAT gateway)</li>
+  <li>created with console, CLI, or IaC</li>
+  <li>security and firewalls</li>
+</ul>
+
+<p>Security groups</p>
+
+<ul>
+  <li>associated with EC2, allow rules</li>
+  <li>stateful</li>
+</ul>
+
+<p>Network ACLs</p>
+
+<ul>
+  <li>associated with VPCs/subnets</li>
+  <li>allow and deny rules</li>
+  <li>stateless</li>
+</ul>
+
+<h2 id="vpc-deployment-options">VPC deployment options</h2>
+
+<p>Plan cloud network</p>
+
+<ul>
+  <li>number and location of networks/subnets</li>
+  <li>traffic control in and out
+    <ul>
+      <li>remote ssh for admin</li>
+      <li>public web app in subnet port 80/443</li>
+    </ul>
+  </li>
+  <li>IPv4 address ranges
+    <ul>
+      <li>CIDR notation /16 /24</li>
+    </ul>
+  </li>
+  <li>network isolation/connectivity
+    <ul>
+      <li>test vpc sandbox</li>
+    </ul>
+  </li>
+  <li>resources in network
+    <ul>
+      <li>subnet for public front end</li>
+      <li>subnet for private back end database</li>
+    </ul>
+  </li>
+</ul>
+
+<p>VPC Deployment Options</p>
+
+<ul>
+  <li>VPC with a single public subnet</li>
+  <li>VPC with public and private subnets</li>
+  <li>VPC with public and private subnets and hardware VPN</li>
+  <li>VPC with private subnet and hardware vpn</li>
+</ul>
+
+<p>VPC with a single public subnet</p>
+
+<ul>
+  <li>create one subnet and internet gateway</li>
+  <li>subnet resources are open to the internet
+    <ul>
+      <li>elastic and public IPs</li>
+    </ul>
+  </li>
+  <li>control traffic with ACLs and security groups</li>
+</ul>
+
+<p>VPC with public and private subnets</p>
+
+<ul>
+  <li>one public and one private subnet</li>
+  <li>used for multi tier applicatoins
+    <ul>
+      <li>public subnet for front end</li>
+      <li>private subnet for back end</li>
+    </ul>
+  </li>
+  <li>private resources do not have direct outbound internet access
+    <ul>
+      <li>NAT in public subnet for indirect</li>
+    </ul>
+  </li>
+</ul>
+
+<p>VPC with public and private subnets and hardware VPN</p>
+
+<ul>
+  <li>VPN links on premise network to aws
+    <ul>
+      <li>IPsec VPN tunnel</li>
+      <li>aws manages cloud side vpn configuration</li>
+      <li>user must configure on premise vpn</li>
+    </ul>
+  </li>
+  <li>on premise traffic to aws elastic Ip
+    <ul>
+      <li>traverse internet, not VPN</li>
+    </ul>
+  </li>
+  <li>aws private subnet traffic
+    <ul>
+      <li>routed to on premise network via VPN</li>
+    </ul>
+  </li>
+</ul>
+
+<p>VPC with private subnet and hardware vpn</p>
+
+<ul>
+  <li>no internet gateway
+    <ul>
+      <li>no internet connectivity</li>
+    </ul>
+  </li>
+  <li>extend on premise network into aws</li>
+  <li>vpn links on premise network to cloud
+    <ul>
+      <li>IPsec vpn tunnel</li>
+      <li>manage vpn on both ends</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="vpc-networking-components">VPC networking components</h2>
+
+<p>VPCs will contain a set of components</p>
+
+<ul>
+  <li>subnets</li>
+  <li>route tables</li>
+  <li>network interfaces</li>
+  <li>elastic IP address</li>
+  <li>NAT and internet gateways</li>
+</ul>
+
+<p>Subnets</p>
+
+<ul>
+  <li>contained with vpc</li>
+  <li>created within an AZ</li>
+  <li>ip address range falls within vpc range
+    <ul>
+      <li>auto assign ipv4 public ip</li>
+    </ul>
+  </li>
+  <li>ec2 instances deployed into subnets</li>
+  <li>associated with network ACLs
+    <ul>
+      <li>allow/deny inbound/outbound network traffic flow</li>
+    </ul>
+  </li>
+  <li>associated with route tables</li>
+</ul>
+
+<p>Route tables</p>
+
+<ul>
+  <li>routing control</li>
+  <li>internet gateways
+    <ul>
+      <li>0.0.0.0/0 default route</li>
+    </ul>
+  </li>
+  <li>virtual firewall appliances</li>
+  <li>on premise networks through vpn or direct connect</li>
+  <li>vpc peering
+    <ul>
+      <li>private traffic between vpcs</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Network interfaces</p>
+
+<ul>
+  <li>elastic network interface
+    <ul>
+      <li>attached / detached from instances</li>
+    </ul>
+  </li>
+  <li>subnet set at create time</li>
+  <li>auto mac address</li>
+  <li>ip addressing
+    <ul>
+      <li>ipv4 or ipv6</li>
+      <li>static or dynamic assignment</li>
+    </ul>
+  </li>
+  <li>security groups associated with interface</li>
+</ul>
+
+<p>Elastic ip address</p>
+
+<ul>
+  <li>static ipv4 address</li>
+  <li>linked to aws account</li>
+  <li>associated with
+    <ul>
+      <li>ec2 instance</li>
+      <li>network interface</li>
+    </ul>
+  </li>
+  <li>release ip if not needed
+    <ul>
+      <li>cost $ to use</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Gateways</p>
+
+<ul>
+  <li>Network address translation (NAT)
+    <ul>
+      <li>allow internet connectivity from private subnet</li>
+      <li>connections from internet not allowed</li>
+      <li>only responses from internet allowed</li>
+      <li>modify subnet route tables to use NAT</li>
+    </ul>
+  </li>
+  <li>Internet gateway
+    <ul>
+      <li>provides subnet access to internet</li>
+      <li>connections from internet allowed</li>
+      <li>modify subnet route tables to use internet</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="ip-addressing-and-subnets">IP addressing and subnets</h2>
+
+<p>Plan out ip addressing prior to vpc and resource deployment.</p>
+
+<ul>
+  <li>CIDR notation</li>
+  <li>ip address visibility
+    <ul>
+      <li>public, reachable from internet</li>
+      <li>private, used within vpcs</li>
+    </ul>
+  </li>
+  <li>aws supports ipv4 and ipv6</li>
+  <li>ip addresses
+    <ul>
+      <li>associated with network interfaces</li>
+      <li>statically or dynamically assigned</li>
+    </ul>
+  </li>
+  <li>ec2 instances recieve an internal dns hostname
+    <ul>
+      <li>example: ip-10-23-55-1.ec2.internal</li>
+      <li>resolvable only within vpc sunet</li>
+    </ul>
+  </li>
+  <li>new ec2 instances
+    <ul>
+      <li>receive a private ip from subnet is occupies</li>
+      <li>address constant between reboots</li>
+      <li>address released when instance is terminated</li>
+    </ul>
+  </li>
+  <li>auto assign public ip option</li>
+</ul>
+
+<h2 id="create-a-vpc">Create a VPC</h2>
+
+<p>Create vpc through aws console</p>
+
+<ul>
+  <li>configuration wizard</li>
+  <li>old console style</li>
+  <li>ip cidr range and block</li>
+  <li>route table and dns</li>
+  <li>acl and security group</li>
+  <li>subnets</li>
+</ul>
+
+<h2 id="automate-deployment-of-infrastructure">Automate deployment of infrastructure</h2>
+
+<p>Deployment tools</p>
+
+<ul>
+  <li>powershell (lol)</li>
+  <li>aws cli</li>
+  <li>api, boto3</li>
+  <li>cloud formation IaC</li>
+  <li>aws elastic beanstalk and ops works</li>
+</ul>
+
+<p>Cloudformation IaC</p>
+
+<ul>
+  <li>template file
+    <ul>
+      <li>json with passed parameters</li>
+      <li>custom or preconfigured</li>
+    </ul>
+  </li>
+  <li>related resources deployed quickly</li>
+</ul>
+
+<p>Beanstalk</p>
+
+<ul>
+  <li>application infrastructure orchestration service</li>
+  <li>do not provision individual resources</li>
+  <li>upload applications in different languages</li>
+</ul>
+
+<p>OpsWorks</p>
+
+<ul>
+  <li>centralized application cofiguration managment
+    <ul>
+      <li>chef and puppet</li>
+    </ul>
+  </li>
+  <li>no manual ec2 configuration</li>
+  <li>automate instance
+    <ul>
+      <li>deployment, configuration, and management</li>
+    </ul>
+  </li>
+  <li>applications consist of
+    <ul>
+      <li>stacks, resources</li>
+      <li>layers, configuration</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="security-groups-and-network-acls">Security groups and network ACLs</h2>
+
+<p>Security group</p>
+
+<ul>
+  <li>stateful firewall
+    <ul>
+      <li>supports allow rules</li>
+      <li>tracks state of connection</li>
+    </ul>
+  </li>
+  <li>associated with network interfaces
+    <ul>
+      <li>attached to ec2</li>
+    </ul>
+  </li>
+  <li>consists of acl allow rules
+    <ul>
+      <li>similiar to a traditional firewall</li>
+    </ul>
+  </li>
+  <li>determine how many security groups
+    <ul>
+      <li>firewall pools</li>
+      <li>one group can be associated withn many interfaces</li>
+    </ul>
+  </li>
+  <li>consistent naming and taging
+    <ul>
+      <li>track security</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Network ACLs</p>
+
+<ul>
+  <li>associated with vpc subnets</li>
+  <li>support both allow and deny rules</li>
+  <li>stateless firewall
+    <ul>
+      <li>return traffic is not allowed automatically</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="implement-security-groups">Implement security groups</h2>
+
+<ul>
+  <li>ec2 console</li>
+  <li>network and security</li>
+  <li>security groups</li>
+  <li>give name, description, vpc, rules, tags</li>
+  <li>type, protocol, port, source</li>
+  <li>statefull firewall
+    <ul>
+      <li>do not have to define inbound and outbound rules</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="create-internet-gateway">Create internet gateway</h2>
+
+<ul>
+  <li>allow access to internet for vpc deployed resources</li>
+  <li>vpc dashboard</li>
+  <li>subnets</li>
+  <li>internet gateway
+    <ul>
+      <li>state: attached, detached</li>
+    </ul>
+  </li>
+  <li>route table
+    <ul>
+      <li>connect internet gateway to subnet</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="implement-network-acls">Implement network ACLs</h2>
+
+<ul>
+  <li>perimeter in and out bound traffic control</li>
+  <li>vpc dashboard</li>
+  <li>security</li>
+  <li>network ACLs</li>
+  <li>name and vpc</li>
+  <li>default deny all in and out bound</li>
+  <li>edit vpc nacl association</li>
+</ul>
+
+<h2 id="vpc-connectivity-options">VPC connectivity options</h2>
+
+<p>VPC peering</p>
+
+<ul>
+  <li>connectivity between vpc</li>
+  <li>different regions and accounts</li>
+  <li>no vpn</li>
+  <li>ec2 in different vpc communicate</li>
+  <li>single vpc peered with multiple vps
+    <ul>
+      <li>no transitive peering</li>
+    </ul>
+  </li>
+</ul>
+
+
+  </div><a class="u-url" href="/2022/07/21/vpc-fundamentals.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="simple-footer">
+    <!-- <p class="footer-color"> Matt Rhoads | <a href="mailto:mrhoads1@gmail.com">mrhoads1@gmail.com</a></p> -->
+    <p></p>
+</footer>
+</body>
+
+</html>
