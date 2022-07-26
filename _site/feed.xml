@@ -1,4 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-07-21T16:24:55-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Vpc Fundamentals</title><link href="http://localhost:4000/2022/07/21/vpc-fundamentals.html" rel="alternate" type="text/html" title="Vpc Fundamentals" /><published>2022-07-21T00:00:00-05:00</published><updated>2022-07-21T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/21/vpc-fundamentals</id><content type="html" xml:base="http://localhost:4000/2022/07/21/vpc-fundamentals.html"><![CDATA[<p>Notes on the AWS Virtual Private Cloud (VPC) service.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-07-26T12:02:04-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Parsing Apple Workout Data</title><link href="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html" rel="alternate" type="text/html" title="Parsing Apple Workout Data" /><published>2022-07-26T00:00:00-05:00</published><updated>2022-07-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/26/parsing-apple-workout-data</id><content type="html" xml:base="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"><![CDATA[<p>Apple provides easy access to personal workout data. The challenge is parsing the blob of data.</p>
+
+<p><strong>Below is a protocol for extracting heart rate time series data.</strong></p>
+
+<p>Tools:</p>
+
+<ul>
+  <li><a href="https://gist.github.com/hoffa/936db2bb85e134709cd263dd358ca309">original idea</a></li>
+  <li><a href="https://docs.python.org/3/library/json.html?highlight=json#module-json">python json module</a></li>
+  <li><a href="https://docs.python.org/3/library/xml.etree.elementtree.html">python xml api</a></li>
+  <li><a href="https://stedolan.github.io/jq/">jq json processor</a></li>
+</ul>
+
+<h2 id="data-retrieval">Data retrieval</h2>
+
+<ol>
+  <li>Go to health app on iphone</li>
+  <li>Tap profile icon and scroll to bottom</li>
+  <li>Select “export all health data” option</li>
+  <li>Push <code class="language-plaintext highlighter-rouge">export.zip</code> to cloud storage</li>
+  <li>Retrieve and extract archive on local machine</li>
+</ol>
+
+<p>Note: Export process may take several minutes. Archive could be 10s of MB.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip export.zip -d /path/to/dir
+</code></pre></div></div>
+
+<h2 id="data-format">Data format</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># file structure
+</code></pre></div></div>
+
+<p>Explain contents of each file. Note which file has hear rate data.</p>
+
+<h2 id="convert-xml-to-json-with-python">Convert xml to json with python</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import json
+import sys
+from xml.etree.ElementTree import iterparse
+
+for _, elem in iterparse(sys.argv[1]):
+    if elem.tag == "Record":
+        if elem.attrib["type"] == "HKQuantityTypeIdentifierHeartRate":
+            print(json.dumps(elem.attrib))
+</code></pre></div></div>
+
+<p>Explain that data is in xml. Need to use <code class="language-plaintext highlighter-rouge">parse.py</code> to find records with heart rate data.</p>
+
+<h2 id="stream-json-to-csv-with-jq">Stream json to csv with jq</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 parse.py data/export.xml | \
+jq -r '[.endDate, .type, .unit, .value] | @csv' \
+&gt; data/heart_rate.csv
+</code></pre></div></div>
+
+<p>Explain that <code class="language-plaintext highlighter-rouge">parse.py</code> combined with <code class="language-plaintext highlighter-rouge">jq</code> will stream heart time series data into a csv file.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Apple provides easy access to personal workout data. The challenge is parsing the blob of data. Below is a protocol for extracting heart rate time series data. Tools: original idea python json module python xml api jq json processor Data retrieval Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine Note: Export process may take several minutes. Archive could be 10s of MB. unzip export.zip -d /path/to/dir Data format # file structure Explain contents of each file. Note which file has hear rate data. Convert xml to json with python import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == "Record": if elem.attrib["type"] == "HKQuantityTypeIdentifierHeartRate": print(json.dumps(elem.attrib)) Explain that data is in xml. Need to use parse.py to find records with heart rate data. Stream json to csv with jq python3 parse.py data/export.xml | \ jq -r '[.endDate, .type, .unit, .value] | @csv' \ &gt; data/heart_rate.csv Explain that parse.py combined with jq will stream heart time series data into a csv file.]]></summary></entry><entry><title type="html">Vpc Fundamentals</title><link href="http://localhost:4000/2022/07/21/vpc-fundamentals.html" rel="alternate" type="text/html" title="Vpc Fundamentals" /><published>2022-07-21T00:00:00-05:00</published><updated>2022-07-21T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/21/vpc-fundamentals</id><content type="html" xml:base="http://localhost:4000/2022/07/21/vpc-fundamentals.html"><![CDATA[<p>Notes on the AWS Virtual Private Cloud (VPC) service.</p>
 
 <p>Fundamental features and links to related topics.</p>
 
