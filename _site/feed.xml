@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-07-26T12:02:04-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Parsing Apple Workout Data</title><link href="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html" rel="alternate" type="text/html" title="Parsing Apple Workout Data" /><published>2022-07-26T00:00:00-05:00</published><updated>2022-07-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/26/parsing-apple-workout-data</id><content type="html" xml:base="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"><![CDATA[<p>Apple provides easy access to personal workout data. The challenge is parsing the blob of data.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-07-27T20:54:03-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Parsing Apple Workout Data</title><link href="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html" rel="alternate" type="text/html" title="Parsing Apple Workout Data" /><published>2022-07-26T00:00:00-05:00</published><updated>2022-07-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/26/parsing-apple-workout-data</id><content type="html" xml:base="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"><![CDATA[<p>Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features.</p>
 
-<p><strong>Below is a protocol for extracting heart rate time series data.</strong></p>
+<p>Below is a protocol for streaming heart rate telemetry from a large <code class="language-plaintext highlighter-rouge">xml</code> document into a simple <code class="language-plaintext highlighter-rouge">csv</code> file on a personal linux laptop.</p>
 
 <p>Tools:</p>
 
@@ -11,7 +11,7 @@
   <li><a href="https://stedolan.github.io/jq/">jq json processor</a></li>
 </ul>
 
-<h2 id="data-retrieval">Data retrieval</h2>
+<h2 id="retrieve-health-data">Retrieve health data</h2>
 
 <ol>
   <li>Go to health app on iphone</li>
@@ -21,21 +21,46 @@
   <li>Retrieve and extract archive on local machine</li>
 </ol>
 
-<p>Note: Export process may take several minutes. Archive could be 10s of MB.</p>
+<p>The export process may take several minutes. Archive could be 10s of MB.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip export.zip -d /path/to/dir
+<p>The extracted health data has the following structure:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export
+└── apple_health_export
+    ├── export_cda.xml
+    ├── export.xml
+    └── workout-routes
+        ├── route_2019-03-11_1.19pm.gpx
+        ├── route_2019-03-12_1.29pm.gpx
+        ├── route_2019-03-13_6.58pm.gpx
+        ├── ......
 </code></pre></div></div>
 
-<h2 id="data-format">Data format</h2>
+<p>All health telemetry is rolled up in the <code class="language-plaintext highlighter-rouge">export.xml</code> file. This file can be 100s of MB.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># file structure
+<p>Within <code class="language-plaintext highlighter-rouge">export.xml</code> the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> record type holds heart rate data:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Record type="HKQuantityTypeIdentifierHeartRate" 
+    ...
+    unit="count/min" 
+    creationDate="2019-03-02 20:42:24 -0500" 
+    startDate="2019-03-02 19:47:18 -0500" 
+    endDate="2019-03-02 19:47:18 -0500" 
+    value="79"&gt;
+    ...
+&lt;/Record&gt;
 </code></pre></div></div>
 
-<p>Explain contents of each file. Note which file has hear rate data.</p>
+<h2 id="parse-heart-rate-data-with-python">Parse heart rate data with python</h2>
 
-<h2 id="convert-xml-to-json-with-python">Convert xml to json with python</h2>
+<p>Each record in <code class="language-plaintext highlighter-rouge">export.xml</code> can be parsed with the python xml api <code class="language-plaintext highlighter-rouge">iterparse</code> function and filtered using the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> type.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import json
+<p>Filtered heart rate records are then converted from <code class="language-plaintext highlighter-rouge">xml</code> to <code class="language-plaintext highlighter-rouge">json</code> and printed to a terminal for the next processing step.</p>
+
+<p>Depending on the size of the <code class="language-plaintext highlighter-rouge">export.xml</code> the python script may run for several minutes:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># parse.py
+import json
 import sys
 from xml.etree.ElementTree import iterparse
 
@@ -45,16 +70,21 @@ for _, elem in iterparse(sys.argv[1]):
             print(json.dumps(elem.attrib))
 </code></pre></div></div>
 
-<p>Explain that data is in xml. Need to use <code class="language-plaintext highlighter-rouge">parse.py</code> to find records with heart rate data.</p>
+<h2 id="stream-heart-rate-json-into-csv-with-jq">Stream heart rate json into csv with jq</h2>
 
-<h2 id="stream-json-to-csv-with-jq">Stream json to csv with jq</h2>
+<p>Now that <code class="language-plaintext highlighter-rouge">json</code> like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline.</p>
 
+<p>The pipeline will stream heart rate data into <code class="language-plaintext highlighter-rouge">jq</code> to extract telemetry and then pump formatted data into a clean <code class="language-plaintext highlighter-rouge">csv</code>.</p>
+
+<p>The entire pipeline can be ran in a bash terminal:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 parse.py data/export.xml | \
 jq -r '[.endDate, .type, .unit, .value] | @csv' \
 &gt; data/heart_rate.csv
 </code></pre></div></div>
 
-<p>Explain that <code class="language-plaintext highlighter-rouge">parse.py</code> combined with <code class="language-plaintext highlighter-rouge">jq</code> will stream heart time series data into a csv file.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Apple provides easy access to personal workout data. The challenge is parsing the blob of data. Below is a protocol for extracting heart rate time series data. Tools: original idea python json module python xml api jq json processor Data retrieval Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine Note: Export process may take several minutes. Archive could be 10s of MB. unzip export.zip -d /path/to/dir Data format # file structure Explain contents of each file. Note which file has hear rate data. Convert xml to json with python import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == "Record": if elem.attrib["type"] == "HKQuantityTypeIdentifierHeartRate": print(json.dumps(elem.attrib)) Explain that data is in xml. Need to use parse.py to find records with heart rate data. Stream json to csv with jq python3 parse.py data/export.xml | \ jq -r '[.endDate, .type, .unit, .value] | @csv' \ &gt; data/heart_rate.csv Explain that parse.py combined with jq will stream heart time series data into a csv file.]]></summary></entry><entry><title type="html">Vpc Fundamentals</title><link href="http://localhost:4000/2022/07/21/vpc-fundamentals.html" rel="alternate" type="text/html" title="Vpc Fundamentals" /><published>2022-07-21T00:00:00-05:00</published><updated>2022-07-21T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/21/vpc-fundamentals</id><content type="html" xml:base="http://localhost:4000/2022/07/21/vpc-fundamentals.html"><![CDATA[<p>Notes on the AWS Virtual Private Cloud (VPC) service.</p>
+<p>Now the fully parsed and neatly formatted heart rate data can be picked up by <code class="language-plaintext highlighter-rouge">pandas</code> and other tools for deeper analysis.</p>
+
+<p>While not the most performant, this method can reliably parse a large Apple health <code class="language-plaintext highlighter-rouge">export.xml</code> on a personal linux laptop.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features. Below is a protocol for streaming heart rate telemetry from a large xml document into a simple csv file on a personal linux laptop. Tools: original idea python json module python xml api jq json processor Retrieve health data Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine The export process may take several minutes. Archive could be 10s of MB. The extracted health data has the following structure: export └── apple_health_export ├── export_cda.xml ├── export.xml └── workout-routes ├── route_2019-03-11_1.19pm.gpx ├── route_2019-03-12_1.29pm.gpx ├── route_2019-03-13_6.58pm.gpx ├── ...... All health telemetry is rolled up in the export.xml file. This file can be 100s of MB. Within export.xml the HKQuantityTypeIdentifierHeartRate record type holds heart rate data: &lt;Record type="HKQuantityTypeIdentifierHeartRate" ... unit="count/min" creationDate="2019-03-02 20:42:24 -0500" startDate="2019-03-02 19:47:18 -0500" endDate="2019-03-02 19:47:18 -0500" value="79"&gt; ... &lt;/Record&gt; Parse heart rate data with python Each record in export.xml can be parsed with the python xml api iterparse function and filtered using the HKQuantityTypeIdentifierHeartRate type. Filtered heart rate records are then converted from xml to json and printed to a terminal for the next processing step. Depending on the size of the export.xml the python script may run for several minutes: # parse.py import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == "Record": if elem.attrib["type"] == "HKQuantityTypeIdentifierHeartRate": print(json.dumps(elem.attrib)) Stream heart rate json into csv with jq Now that json like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline. The pipeline will stream heart rate data into jq to extract telemetry and then pump formatted data into a clean csv. The entire pipeline can be ran in a bash terminal: python3 parse.py data/export.xml | \ jq -r '[.endDate, .type, .unit, .value] | @csv' \ &gt; data/heart_rate.csv Now the fully parsed and neatly formatted heart rate data can be picked up by pandas and other tools for deeper analysis. While not the most performant, this method can reliably parse a large Apple health export.xml on a personal linux laptop.]]></summary></entry><entry><title type="html">Vpc Fundamentals</title><link href="http://localhost:4000/2022/07/21/vpc-fundamentals.html" rel="alternate" type="text/html" title="Vpc Fundamentals" /><published>2022-07-21T00:00:00-05:00</published><updated>2022-07-21T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/21/vpc-fundamentals</id><content type="html" xml:base="http://localhost:4000/2022/07/21/vpc-fundamentals.html"><![CDATA[<p>Notes on the AWS Virtual Private Cloud (VPC) service.</p>
 
 <p>Fundamental features and links to related topics.</p>
 

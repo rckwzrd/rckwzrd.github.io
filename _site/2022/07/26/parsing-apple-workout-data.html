@@ -7,8 +7,8 @@
 <meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="Parsing Apple Workout Data" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Apple provides easy access to personal workout data. The challenge is parsing the blob of data. Below is a protocol for extracting heart rate time series data. Tools: original idea python json module python xml api jq json processor Data retrieval Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine Note: Export process may take several minutes. Archive could be 10s of MB. unzip export.zip -d /path/to/dir Data format # file structure Explain contents of each file. Note which file has hear rate data. Convert xml to json with python import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == &quot;Record&quot;: if elem.attrib[&quot;type&quot;] == &quot;HKQuantityTypeIdentifierHeartRate&quot;: print(json.dumps(elem.attrib)) Explain that data is in xml. Need to use parse.py to find records with heart rate data. Stream json to csv with jq python3 parse.py data/export.xml | \ jq -r &#39;[.endDate, .type, .unit, .value] | @csv&#39; \ &gt; data/heart_rate.csv Explain that parse.py combined with jq will stream heart time series data into a csv file." />
-<meta property="og:description" content="Apple provides easy access to personal workout data. The challenge is parsing the blob of data. Below is a protocol for extracting heart rate time series data. Tools: original idea python json module python xml api jq json processor Data retrieval Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine Note: Export process may take several minutes. Archive could be 10s of MB. unzip export.zip -d /path/to/dir Data format # file structure Explain contents of each file. Note which file has hear rate data. Convert xml to json with python import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == &quot;Record&quot;: if elem.attrib[&quot;type&quot;] == &quot;HKQuantityTypeIdentifierHeartRate&quot;: print(json.dumps(elem.attrib)) Explain that data is in xml. Need to use parse.py to find records with heart rate data. Stream json to csv with jq python3 parse.py data/export.xml | \ jq -r &#39;[.endDate, .type, .unit, .value] | @csv&#39; \ &gt; data/heart_rate.csv Explain that parse.py combined with jq will stream heart time series data into a csv file." />
+<meta name="description" content="Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features. Below is a protocol for streaming heart rate telemetry from a large xml document into a simple csv file on a personal linux laptop. Tools: original idea python json module python xml api jq json processor Retrieve health data Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine The export process may take several minutes. Archive could be 10s of MB. The extracted health data has the following structure: export └── apple_health_export ├── export_cda.xml ├── export.xml └── workout-routes ├── route_2019-03-11_1.19pm.gpx ├── route_2019-03-12_1.29pm.gpx ├── route_2019-03-13_6.58pm.gpx ├── ...... All health telemetry is rolled up in the export.xml file. This file can be 100s of MB. Within export.xml the HKQuantityTypeIdentifierHeartRate record type holds heart rate data: &lt;Record type=&quot;HKQuantityTypeIdentifierHeartRate&quot; ... unit=&quot;count/min&quot; creationDate=&quot;2019-03-02 20:42:24 -0500&quot; startDate=&quot;2019-03-02 19:47:18 -0500&quot; endDate=&quot;2019-03-02 19:47:18 -0500&quot; value=&quot;79&quot;&gt; ... &lt;/Record&gt; Parse heart rate data with python Each record in export.xml can be parsed with the python xml api iterparse function and filtered using the HKQuantityTypeIdentifierHeartRate type. Filtered heart rate records are then converted from xml to json and printed to a terminal for the next processing step. Depending on the size of the export.xml the python script may run for several minutes: # parse.py import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == &quot;Record&quot;: if elem.attrib[&quot;type&quot;] == &quot;HKQuantityTypeIdentifierHeartRate&quot;: print(json.dumps(elem.attrib)) Stream heart rate json into csv with jq Now that json like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline. The pipeline will stream heart rate data into jq to extract telemetry and then pump formatted data into a clean csv. The entire pipeline can be ran in a bash terminal: python3 parse.py data/export.xml | \ jq -r &#39;[.endDate, .type, .unit, .value] | @csv&#39; \ &gt; data/heart_rate.csv Now the fully parsed and neatly formatted heart rate data can be picked up by pandas and other tools for deeper analysis. While not the most performant, this method can reliably parse a large Apple health export.xml on a personal linux laptop." />
+<meta property="og:description" content="Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features. Below is a protocol for streaming heart rate telemetry from a large xml document into a simple csv file on a personal linux laptop. Tools: original idea python json module python xml api jq json processor Retrieve health data Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine The export process may take several minutes. Archive could be 10s of MB. The extracted health data has the following structure: export └── apple_health_export ├── export_cda.xml ├── export.xml └── workout-routes ├── route_2019-03-11_1.19pm.gpx ├── route_2019-03-12_1.29pm.gpx ├── route_2019-03-13_6.58pm.gpx ├── ...... All health telemetry is rolled up in the export.xml file. This file can be 100s of MB. Within export.xml the HKQuantityTypeIdentifierHeartRate record type holds heart rate data: &lt;Record type=&quot;HKQuantityTypeIdentifierHeartRate&quot; ... unit=&quot;count/min&quot; creationDate=&quot;2019-03-02 20:42:24 -0500&quot; startDate=&quot;2019-03-02 19:47:18 -0500&quot; endDate=&quot;2019-03-02 19:47:18 -0500&quot; value=&quot;79&quot;&gt; ... &lt;/Record&gt; Parse heart rate data with python Each record in export.xml can be parsed with the python xml api iterparse function and filtered using the HKQuantityTypeIdentifierHeartRate type. Filtered heart rate records are then converted from xml to json and printed to a terminal for the next processing step. Depending on the size of the export.xml the python script may run for several minutes: # parse.py import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == &quot;Record&quot;: if elem.attrib[&quot;type&quot;] == &quot;HKQuantityTypeIdentifierHeartRate&quot;: print(json.dumps(elem.attrib)) Stream heart rate json into csv with jq Now that json like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline. The pipeline will stream heart rate data into jq to extract telemetry and then pump formatted data into a clean csv. The entire pipeline can be ran in a bash terminal: python3 parse.py data/export.xml | \ jq -r &#39;[.endDate, .type, .unit, .value] | @csv&#39; \ &gt; data/heart_rate.csv Now the fully parsed and neatly formatted heart rate data can be picked up by pandas and other tools for deeper analysis. While not the most performant, this method can reliably parse a large Apple health export.xml on a personal linux laptop." />
 <link rel="canonical" href="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html" />
 <meta property="og:url" content="http://localhost:4000/2022/07/26/parsing-apple-workout-data.html" />
 <meta property="og:site_name" content="Rckwzrd’s Reference" />
@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Parsing Apple Workout Data" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-07-26T00:00:00-05:00","datePublished":"2022-07-26T00:00:00-05:00","description":"Apple provides easy access to personal workout data. The challenge is parsing the blob of data. Below is a protocol for extracting heart rate time series data. Tools: original idea python json module python xml api jq json processor Data retrieval Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine Note: Export process may take several minutes. Archive could be 10s of MB. unzip export.zip -d /path/to/dir Data format # file structure Explain contents of each file. Note which file has hear rate data. Convert xml to json with python import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == &quot;Record&quot;: if elem.attrib[&quot;type&quot;] == &quot;HKQuantityTypeIdentifierHeartRate&quot;: print(json.dumps(elem.attrib)) Explain that data is in xml. Need to use parse.py to find records with heart rate data. Stream json to csv with jq python3 parse.py data/export.xml | \\ jq -r &#39;[.endDate, .type, .unit, .value] | @csv&#39; \\ &gt; data/heart_rate.csv Explain that parse.py combined with jq will stream heart time series data into a csv file.","headline":"Parsing Apple Workout Data","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"},"url":"http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-07-26T00:00:00-05:00","datePublished":"2022-07-26T00:00:00-05:00","description":"Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features. Below is a protocol for streaming heart rate telemetry from a large xml document into a simple csv file on a personal linux laptop. Tools: original idea python json module python xml api jq json processor Retrieve health data Go to health app on iphone Tap profile icon and scroll to bottom Select “export all health data” option Push export.zip to cloud storage Retrieve and extract archive on local machine The export process may take several minutes. Archive could be 10s of MB. The extracted health data has the following structure: export └── apple_health_export ├── export_cda.xml ├── export.xml └── workout-routes ├── route_2019-03-11_1.19pm.gpx ├── route_2019-03-12_1.29pm.gpx ├── route_2019-03-13_6.58pm.gpx ├── ...... All health telemetry is rolled up in the export.xml file. This file can be 100s of MB. Within export.xml the HKQuantityTypeIdentifierHeartRate record type holds heart rate data: &lt;Record type=&quot;HKQuantityTypeIdentifierHeartRate&quot; ... unit=&quot;count/min&quot; creationDate=&quot;2019-03-02 20:42:24 -0500&quot; startDate=&quot;2019-03-02 19:47:18 -0500&quot; endDate=&quot;2019-03-02 19:47:18 -0500&quot; value=&quot;79&quot;&gt; ... &lt;/Record&gt; Parse heart rate data with python Each record in export.xml can be parsed with the python xml api iterparse function and filtered using the HKQuantityTypeIdentifierHeartRate type. Filtered heart rate records are then converted from xml to json and printed to a terminal for the next processing step. Depending on the size of the export.xml the python script may run for several minutes: # parse.py import json import sys from xml.etree.ElementTree import iterparse for _, elem in iterparse(sys.argv[1]): if elem.tag == &quot;Record&quot;: if elem.attrib[&quot;type&quot;] == &quot;HKQuantityTypeIdentifierHeartRate&quot;: print(json.dumps(elem.attrib)) Stream heart rate json into csv with jq Now that json like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline. The pipeline will stream heart rate data into jq to extract telemetry and then pump formatted data into a clean csv. The entire pipeline can be ran in a bash terminal: python3 parse.py data/export.xml | \\ jq -r &#39;[.endDate, .type, .unit, .value] | @csv&#39; \\ &gt; data/heart_rate.csv Now the fully parsed and neatly formatted heart rate data can be picked up by pandas and other tools for deeper analysis. While not the most performant, this method can reliably parse a large Apple health export.xml on a personal linux laptop.","headline":"Parsing Apple Workout Data","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"},"url":"http://localhost:4000/2022/07/26/parsing-apple-workout-data.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Rckwzrd&apos;s Reference" /></head>
 <body><header class="site-header" role="banner">
@@ -47,9 +47,9 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p>Apple provides easy access to personal workout data. The challenge is parsing the blob of data.</p>
+    <p>Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features.</p>
 
-<p><strong>Below is a protocol for extracting heart rate time series data.</strong></p>
+<p>Below is a protocol for streaming heart rate telemetry from a large <code class="language-plaintext highlighter-rouge">xml</code> document into a simple <code class="language-plaintext highlighter-rouge">csv</code> file on a personal linux laptop.</p>
 
 <p>Tools:</p>
 
@@ -60,7 +60,7 @@
   <li><a href="https://stedolan.github.io/jq/">jq json processor</a></li>
 </ul>
 
-<h2 id="data-retrieval">Data retrieval</h2>
+<h2 id="retrieve-health-data">Retrieve health data</h2>
 
 <ol>
   <li>Go to health app on iphone</li>
@@ -70,21 +70,46 @@
   <li>Retrieve and extract archive on local machine</li>
 </ol>
 
-<p>Note: Export process may take several minutes. Archive could be 10s of MB.</p>
+<p>The export process may take several minutes. Archive could be 10s of MB.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip export.zip -d /path/to/dir
+<p>The extracted health data has the following structure:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export
+└── apple_health_export
+    ├── export_cda.xml
+    ├── export.xml
+    └── workout-routes
+        ├── route_2019-03-11_1.19pm.gpx
+        ├── route_2019-03-12_1.29pm.gpx
+        ├── route_2019-03-13_6.58pm.gpx
+        ├── ......
 </code></pre></div></div>
 
-<h2 id="data-format">Data format</h2>
+<p>All health telemetry is rolled up in the <code class="language-plaintext highlighter-rouge">export.xml</code> file. This file can be 100s of MB.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># file structure
+<p>Within <code class="language-plaintext highlighter-rouge">export.xml</code> the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> record type holds heart rate data:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Record type="HKQuantityTypeIdentifierHeartRate" 
+    ...
+    unit="count/min" 
+    creationDate="2019-03-02 20:42:24 -0500" 
+    startDate="2019-03-02 19:47:18 -0500" 
+    endDate="2019-03-02 19:47:18 -0500" 
+    value="79"&gt;
+    ...
+&lt;/Record&gt;
 </code></pre></div></div>
 
-<p>Explain contents of each file. Note which file has hear rate data.</p>
+<h2 id="parse-heart-rate-data-with-python">Parse heart rate data with python</h2>
 
-<h2 id="convert-xml-to-json-with-python">Convert xml to json with python</h2>
+<p>Each record in <code class="language-plaintext highlighter-rouge">export.xml</code> can be parsed with the python xml api <code class="language-plaintext highlighter-rouge">iterparse</code> function and filtered using the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> type.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import json
+<p>Filtered heart rate records are then converted from <code class="language-plaintext highlighter-rouge">xml</code> to <code class="language-plaintext highlighter-rouge">json</code> and printed to a terminal for the next processing step.</p>
+
+<p>Depending on the size of the <code class="language-plaintext highlighter-rouge">export.xml</code> the python script may run for several minutes:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># parse.py
+import json
 import sys
 from xml.etree.ElementTree import iterparse
 
@@ -94,16 +119,21 @@ for _, elem in iterparse(sys.argv[1]):
             print(json.dumps(elem.attrib))
 </code></pre></div></div>
 
-<p>Explain that data is in xml. Need to use <code class="language-plaintext highlighter-rouge">parse.py</code> to find records with heart rate data.</p>
+<h2 id="stream-heart-rate-json-into-csv-with-jq">Stream heart rate json into csv with jq</h2>
 
-<h2 id="stream-json-to-csv-with-jq">Stream json to csv with jq</h2>
+<p>Now that <code class="language-plaintext highlighter-rouge">json</code> like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline.</p>
 
+<p>The pipeline will stream heart rate data into <code class="language-plaintext highlighter-rouge">jq</code> to extract telemetry and then pump formatted data into a clean <code class="language-plaintext highlighter-rouge">csv</code>.</p>
+
+<p>The entire pipeline can be ran in a bash terminal:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 parse.py data/export.xml | \
 jq -r '[.endDate, .type, .unit, .value] | @csv' \
 &gt; data/heart_rate.csv
 </code></pre></div></div>
 
-<p>Explain that <code class="language-plaintext highlighter-rouge">parse.py</code> combined with <code class="language-plaintext highlighter-rouge">jq</code> will stream heart time series data into a csv file.</p>
+<p>Now the fully parsed and neatly formatted heart rate data can be picked up by <code class="language-plaintext highlighter-rouge">pandas</code> and other tools for deeper analysis.</p>
+
+<p>While not the most performant, this method can reliably parse a large Apple health <code class="language-plaintext highlighter-rouge">export.xml</code> on a personal linux laptop.</p>
 
   </div><a class="u-url" href="/2022/07/26/parsing-apple-workout-data.html" hidden></a>
 </article>
