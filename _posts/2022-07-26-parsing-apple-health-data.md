@@ -89,6 +89,12 @@ jq -r '[.endDate, .type, .unit, .value] | @csv' \
 > data/heart_rate.csv
 ```
 
-Now the fully parsed and neatly formatted heart rate data can be picked up by `pandas` and other tools for deeper analysis.
+Now the fully parsed and neatly formatted heart rate data can be picked up by `pandas` and other tools for deeper analysis. 
+
+If other records need to be extracted:
+
+1. Modify the `parse.py` script to filter on a given type
+2. Adjust the arguments in the `jq` command
+3. Define a different `csv` name
 
 While not the most performant, this method can reliably parse a large Apple health `export.xml` on a personal linux laptop. 
