@@ -63,7 +63,7 @@ Filtered heart rate records are then converted from `xml` to `json` and printed 
 
 Depending on the size of the `export.xml` the python script may run for several minutes:
 
-```
+```python
 # parse.py
 import json
 import sys
@@ -83,7 +83,8 @@ Now that `json` like heart rate records are being printed to the terminal they c
 The pipeline will stream heart rate data into `jq` to extract telemetry and then pump formatted data into a clean `csv`.
 
 The entire pipeline can be ran in a bash terminal:
-```
+
+```bash
 python3 parse.py data/export.xml | \
 jq -r '[.endDate, .type, .unit, .value] | @csv' \
 > data/heart_rate.csv

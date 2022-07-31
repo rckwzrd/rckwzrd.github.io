@@ -1,0 +1,466 @@
+<p>Notes on the AWS Virtual Private Cloud (VPC) service.</p>
+
+<p>Fundamental features and links to related topics.</p>
+
+<p>Links:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/vpc/?id=docs_gateway">AWS VPC docs</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Internet_protocol_suite">Internet protocol suite</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Cloud_computing">Cloud computing</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/IPv4">IPv4</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/IPv6">IPv6</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing">CIDR</a></li>
+</ul>
+
+<h2 id="vpc-overview">VPC overview</h2>
+
+<p>Networks defined in aws cloud</p>
+
+<ul>
+  <li>isolated software defined networking</li>
+  <li>custom IPv4/v6 address range</li>
+  <li>multiple subnets</li>
+  <li>routing table configuration</li>
+  <li>network address translation (NAT gateway)</li>
+  <li>created with console, CLI, or IaC</li>
+  <li>security and firewalls</li>
+</ul>
+
+<p>Security groups</p>
+
+<ul>
+  <li>associated with EC2, allow rules</li>
+  <li>stateful</li>
+</ul>
+
+<p>Network ACLs</p>
+
+<ul>
+  <li>associated with VPCs/subnets</li>
+  <li>allow and deny rules</li>
+  <li>stateless</li>
+</ul>
+
+<h2 id="vpc-deployment-options">VPC deployment options</h2>
+
+<p>Plan cloud network</p>
+
+<ul>
+  <li>number and location of networks/subnets</li>
+  <li>traffic control in and out
+    <ul>
+      <li>remote ssh for admin</li>
+      <li>public web app in subnet port 80/443</li>
+    </ul>
+  </li>
+  <li>IPv4 address ranges
+    <ul>
+      <li>CIDR notation /16 /24</li>
+    </ul>
+  </li>
+  <li>network isolation/connectivity
+    <ul>
+      <li>test vpc sandbox</li>
+    </ul>
+  </li>
+  <li>resources in network
+    <ul>
+      <li>subnet for public front end</li>
+      <li>subnet for private back end database</li>
+    </ul>
+  </li>
+</ul>
+
+<p>VPC Deployment Options</p>
+
+<ul>
+  <li>VPC with a single public subnet</li>
+  <li>VPC with public and private subnets</li>
+  <li>VPC with public and private subnets and hardware VPN</li>
+  <li>VPC with private subnet and hardware vpn</li>
+</ul>
+
+<p>VPC with a single public subnet</p>
+
+<ul>
+  <li>create one subnet and internet gateway</li>
+  <li>subnet resources are open to the internet
+    <ul>
+      <li>elastic and public IPs</li>
+    </ul>
+  </li>
+  <li>control traffic with ACLs and security groups</li>
+</ul>
+
+<p>VPC with public and private subnets</p>
+
+<ul>
+  <li>one public and one private subnet</li>
+  <li>used for multi tier applicatoins
+    <ul>
+      <li>public subnet for front end</li>
+      <li>private subnet for back end</li>
+    </ul>
+  </li>
+  <li>private resources do not have direct outbound internet access
+    <ul>
+      <li>NAT in public subnet for indirect</li>
+    </ul>
+  </li>
+</ul>
+
+<p>VPC with public and private subnets and hardware VPN</p>
+
+<ul>
+  <li>VPN links on premise network to aws
+    <ul>
+      <li>IPsec VPN tunnel</li>
+      <li>aws manages cloud side vpn configuration</li>
+      <li>user must configure on premise vpn</li>
+    </ul>
+  </li>
+  <li>on premise traffic to aws elastic Ip
+    <ul>
+      <li>traverse internet, not VPN</li>
+    </ul>
+  </li>
+  <li>aws private subnet traffic
+    <ul>
+      <li>routed to on premise network via VPN</li>
+    </ul>
+  </li>
+</ul>
+
+<p>VPC with private subnet and hardware vpn</p>
+
+<ul>
+  <li>no internet gateway
+    <ul>
+      <li>no internet connectivity</li>
+    </ul>
+  </li>
+  <li>extend on premise network into aws</li>
+  <li>vpn links on premise network to cloud
+    <ul>
+      <li>IPsec vpn tunnel</li>
+      <li>manage vpn on both ends</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="vpc-networking-components">VPC networking components</h2>
+
+<p>VPCs will contain a set of components</p>
+
+<ul>
+  <li>subnets</li>
+  <li>route tables</li>
+  <li>network interfaces</li>
+  <li>elastic IP address</li>
+  <li>NAT and internet gateways</li>
+</ul>
+
+<p>Subnets</p>
+
+<ul>
+  <li>contained with vpc</li>
+  <li>created within an AZ</li>
+  <li>ip address range falls within vpc range
+    <ul>
+      <li>auto assign ipv4 public ip</li>
+    </ul>
+  </li>
+  <li>ec2 instances deployed into subnets</li>
+  <li>associated with network ACLs
+    <ul>
+      <li>allow/deny inbound/outbound network traffic flow</li>
+    </ul>
+  </li>
+  <li>associated with route tables</li>
+</ul>
+
+<p>Route tables</p>
+
+<ul>
+  <li>routing control</li>
+  <li>internet gateways
+    <ul>
+      <li>0.0.0.0/0 default route</li>
+    </ul>
+  </li>
+  <li>virtual firewall appliances</li>
+  <li>on premise networks through vpn or direct connect</li>
+  <li>vpc peering
+    <ul>
+      <li>private traffic between vpcs</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Network interfaces</p>
+
+<ul>
+  <li>elastic network interface
+    <ul>
+      <li>attached / detached from instances</li>
+    </ul>
+  </li>
+  <li>subnet set at create time</li>
+  <li>auto mac address</li>
+  <li>ip addressing
+    <ul>
+      <li>ipv4 or ipv6</li>
+      <li>static or dynamic assignment</li>
+    </ul>
+  </li>
+  <li>security groups associated with interface</li>
+</ul>
+
+<p>Elastic ip address</p>
+
+<ul>
+  <li>static ipv4 address</li>
+  <li>linked to aws account</li>
+  <li>associated with
+    <ul>
+      <li>ec2 instance</li>
+      <li>network interface</li>
+    </ul>
+  </li>
+  <li>release ip if not needed
+    <ul>
+      <li>cost $ to use</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Gateways</p>
+
+<ul>
+  <li>Network address translation (NAT)
+    <ul>
+      <li>allow internet connectivity from private subnet</li>
+      <li>connections from internet not allowed</li>
+      <li>only responses from internet allowed</li>
+      <li>modify subnet route tables to use NAT</li>
+    </ul>
+  </li>
+  <li>Internet gateway
+    <ul>
+      <li>provides subnet access to internet</li>
+      <li>connections from internet allowed</li>
+      <li>modify subnet route tables to use internet</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="ip-addressing-and-subnets">IP addressing and subnets</h2>
+
+<p>Plan out ip addressing prior to vpc and resource deployment.</p>
+
+<ul>
+  <li>CIDR notation</li>
+  <li>ip address visibility
+    <ul>
+      <li>public, reachable from internet</li>
+      <li>private, used within vpcs</li>
+    </ul>
+  </li>
+  <li>aws supports ipv4 and ipv6</li>
+  <li>ip addresses
+    <ul>
+      <li>associated with network interfaces</li>
+      <li>statically or dynamically assigned</li>
+    </ul>
+  </li>
+  <li>ec2 instances recieve an internal dns hostname
+    <ul>
+      <li>example: ip-10-23-55-1.ec2.internal</li>
+      <li>resolvable only within vpc sunet</li>
+    </ul>
+  </li>
+  <li>new ec2 instances
+    <ul>
+      <li>receive a private ip from subnet is occupies</li>
+      <li>address constant between reboots</li>
+      <li>address released when instance is terminated</li>
+    </ul>
+  </li>
+  <li>auto assign public ip option</li>
+</ul>
+
+<h2 id="create-a-vpc">Create a VPC</h2>
+
+<p>Create vpc through aws console</p>
+
+<ul>
+  <li>configuration wizard</li>
+  <li>old console style</li>
+  <li>ip cidr range and block</li>
+  <li>route table and dns</li>
+  <li>acl and security group</li>
+  <li>subnets</li>
+</ul>
+
+<h2 id="automate-deployment-of-infrastructure">Automate deployment of infrastructure</h2>
+
+<p>Deployment tools</p>
+
+<ul>
+  <li>powershell (lol)</li>
+  <li>aws cli</li>
+  <li>api, boto3</li>
+  <li>cloud formation IaC</li>
+  <li>aws elastic beanstalk and ops works</li>
+</ul>
+
+<p>Cloudformation IaC</p>
+
+<ul>
+  <li>template file
+    <ul>
+      <li>json with passed parameters</li>
+      <li>custom or preconfigured</li>
+    </ul>
+  </li>
+  <li>related resources deployed quickly</li>
+</ul>
+
+<p>Beanstalk</p>
+
+<ul>
+  <li>application infrastructure orchestration service</li>
+  <li>do not provision individual resources</li>
+  <li>upload applications in different languages</li>
+</ul>
+
+<p>OpsWorks</p>
+
+<ul>
+  <li>centralized application cofiguration managment
+    <ul>
+      <li>chef and puppet</li>
+    </ul>
+  </li>
+  <li>no manual ec2 configuration</li>
+  <li>automate instance
+    <ul>
+      <li>deployment, configuration, and management</li>
+    </ul>
+  </li>
+  <li>applications consist of
+    <ul>
+      <li>stacks, resources</li>
+      <li>layers, configuration</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="security-groups-and-network-acls">Security groups and network ACLs</h2>
+
+<p>Security group</p>
+
+<ul>
+  <li>stateful firewall
+    <ul>
+      <li>supports allow rules</li>
+      <li>tracks state of connection</li>
+    </ul>
+  </li>
+  <li>associated with network interfaces
+    <ul>
+      <li>attached to ec2</li>
+    </ul>
+  </li>
+  <li>consists of acl allow rules
+    <ul>
+      <li>similiar to a traditional firewall</li>
+    </ul>
+  </li>
+  <li>determine how many security groups
+    <ul>
+      <li>firewall pools</li>
+      <li>one group can be associated withn many interfaces</li>
+    </ul>
+  </li>
+  <li>consistent naming and taging
+    <ul>
+      <li>track security</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Network ACLs</p>
+
+<ul>
+  <li>associated with vpc subnets</li>
+  <li>support both allow and deny rules</li>
+  <li>stateless firewall
+    <ul>
+      <li>return traffic is not allowed automatically</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="implement-security-groups">Implement security groups</h2>
+
+<ul>
+  <li>ec2 console</li>
+  <li>network and security</li>
+  <li>security groups</li>
+  <li>give name, description, vpc, rules, tags</li>
+  <li>type, protocol, port, source</li>
+  <li>statefull firewall
+    <ul>
+      <li>do not have to define inbound and outbound rules</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="create-internet-gateway">Create internet gateway</h2>
+
+<ul>
+  <li>allow access to internet for vpc deployed resources</li>
+  <li>vpc dashboard</li>
+  <li>subnets</li>
+  <li>internet gateway
+    <ul>
+      <li>state: attached, detached</li>
+    </ul>
+  </li>
+  <li>route table
+    <ul>
+      <li>connect internet gateway to subnet</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="implement-network-acls">Implement network ACLs</h2>
+
+<ul>
+  <li>perimeter in and out bound traffic control</li>
+  <li>vpc dashboard</li>
+  <li>security</li>
+  <li>network ACLs</li>
+  <li>name and vpc</li>
+  <li>default deny all in and out bound</li>
+  <li>edit vpc nacl association</li>
+</ul>
+
+<h2 id="vpc-connectivity-options">VPC connectivity options</h2>
+
+<p>VPC peering</p>
+
+<ul>
+  <li>connectivity between vpc</li>
+  <li>different regions and accounts</li>
+  <li>no vpn</li>
+  <li>ec2 in different vpc communicate</li>
+  <li>single vpc peered with multiple vps
+    <ul>
+      <li>no transitive peering</li>
+    </ul>
+  </li>
+</ul>
+

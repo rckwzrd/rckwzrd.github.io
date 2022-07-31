@@ -1,0 +1,331 @@
+<p>Notes on networking. The absolute basics.</p>
+
+<!--more-->
+
+<p>Based on CompTIA A+ 220-100.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/OSI_model">Wikipedia OSI Model</a></p>
+
+<h2 id="hubs-and-bridges">Hubs and Bridges</h2>
+
+<p>Hubs and bridges are less common these days due to low cost of higher level devices.</p>
+
+<p>Hubs connect computers.</p>
+
+<p>Bridges connect networks segments and nodes.</p>
+
+<p>Hubs</p>
+
+<ul>
+  <li>OSI level 1 (physcial level)
+    <ul>
+      <li>no logic or software</li>
+    </ul>
+  </li>
+  <li>simple device to connect computers</li>
+  <li>recieved signals copied to all other ports
+    <ul>
+      <li>creates noise</li>
+    </ul>
+  </li>
+  <li>active
+    <ul>
+      <li>signal boosting and repeating</li>
+      <li>extend length of network</li>
+    </ul>
+  </li>
+  <li>passive
+    <ul>
+      <li>no boosting or extension</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Bridges</p>
+
+<ul>
+  <li>OSI layer 2 (physcial address aware)
+    <ul>
+      <li>mac address is the physical hardware address</li>
+      <li>logic to bridge traffic between nodes with mac</li>
+    </ul>
+  </li>
+  <li>bridge functions
+    <ul>
+      <li>join similiar network topologies</li>
+      <li>divide network into segments or nodes</li>
+      <li>isolate network traffic between nodes</li>
+    </ul>
+  </li>
+  <li>bridges forward broadcast packets
+    <ul>
+      <li>broadcasts addressed to all computers</li>
+    </ul>
+  </li>
+  <li>cannot perform intelligent network path selection
+    <ul>
+      <li>route between sender and destination is constant</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="switches">Switches</h2>
+
+<p>Switches connect computers. It overtook the hub.</p>
+
+<ul>
+  <li>OSI layer 2 (physical address aware)
+    <ul>
+      <li>use mac to determine where to send data</li>
+    </ul>
+  </li>
+  <li>provides central connectivity between computers</li>
+  <li>examine layer 2 header (mac) for info</li>
+  <li>uses info to forward packets to correct port
+    <ul>
+      <li>reduce noise and improves performance</li>
+      <li>builds mac address table</li>
+      <li>filters traffic</li>
+    </ul>
+  </li>
+  <li>advantage
+    <ul>
+      <li>increase network bandwidth, security, and performance</li>
+      <li>regulates flow of traffic and reduces packet collissions</li>
+      <li>mac address are known for all hardware</li>
+    </ul>
+  </li>
+  <li>disadvantage
+    <ul>
+      <li>difficuly to troubleshoot</li>
+      <li>devices can be spoofed</li>
+      <li>needs proper design and config</li>
+    </ul>
+  </li>
+  <li>managed (intelligent switch)
+    <ul>
+      <li>configure over IP with software and dedicated port</li>
+    </ul>
+  </li>
+  <li>unmanaged (plug and play)
+    <ul>
+      <li>no configuration control</li>
+      <li>cost efficient for small deployments</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="routers">Routers</h2>
+
+<p>Routers connect networks. It overtook the bridge.</p>
+
+<p>Intelligent devices that find the best path for transmitting data between networks using IP addresses. Routers are required to connect seperate WANs and LANs.</p>
+
+<ul>
+  <li>OSI layter 3 (networks)
+    <ul>
+      <li>IP address</li>
+      <li>LAN, WAN, copper, and fiber</li>
+      <li>route table programming</li>
+    </ul>
+  </li>
+  <li>routing tables store network addresses
+    <ul>
+      <li>initial routes</li>
+      <li>routing tables can be shared between routers</li>
+    </ul>
+  </li>
+  <li>transmit accross and connect multiple networks
+    <ul>
+      <li>subnets in a large network</li>
+    </ul>
+  </li>
+  <li>does not forward broadcasts
+    <ul>
+      <li>isolated broadcast domains</li>
+    </ul>
+  </li>
+  <li>determine best route accross known routes
+    <ul>
+      <li>consider distance and congestion</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="access-points-repeaters-and-extenders">Access Points, Repeaters, and Extenders</h2>
+
+<ul>
+  <li>access point
+    <ul>
+      <li>any point that enables access to network</li>
+      <li>“wireless access point”</li>
+      <li>“ethernet port in a wall outlet”</li>
+    </ul>
+  </li>
+  <li>repeaters and extender
+    <ul>
+      <li>operate at layer 1</li>
+      <li>improve signal range</li>
+      <li>extend wifi network</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="network-controllers">Network Controllers</h2>
+
+<p>Network interface cards are used to connect hardware to a switch or network.</p>
+
+<ul>
+  <li>network devices require interface
+    <ul>
+      <li>wireless or wired</li>
+    </ul>
+  </li>
+  <li>can be hardwired or modular</li>
+  <li>speed and duplex
+    <ul>
+      <li>set with auto negotiate</li>
+    </ul>
+  </li>
+  <li>wake on LAN
+    <ul>
+      <li>turn on hardware with network message</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="cable-and-dsl-modems">Cable and DSL Modems</h2>
+
+<p>Hardware devices used to connect to a remote netowrk or internet.</p>
+
+<p>Signal is transmitted in an analog or digital form over long distances. Contraction of modulate and demodulate.</p>
+
+<ul>
+  <li>send and recieve data
+    <ul>
+      <li>telephone and cable lines</li>
+    </ul>
+  </li>
+  <li>dial-up modem
+    <ul>
+      <li>dial into ISP via telephone</li>
+      <li>slow speed 56kbs</li>
+    </ul>
+  </li>
+  <li>digital subscriber line (DSL)
+    <ul>
+      <li>transfer digital signal over standard telephone</li>
+      <li>use DSL modem to connect to ISP</li>
+    </ul>
+  </li>
+  <li>cable modem
+    <ul>
+      <li>coax tv lines to connect to ISP</li>
+      <li>always on and fast data transfer</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="patch-panels">Patch Panels</h2>
+
+<p>Structured cabling, patch panels, and network racks.</p>
+
+<ul>
+  <li>structured cabling
+    <ul>
+      <li>bundling and organizing cables</li>
+      <li>safety and aesthetics</li>
+    </ul>
+  </li>
+  <li>patch panel
+    <ul>
+      <li>hardware assembly with many ports</li>
+      <li>manages connections to LAN</li>
+      <li>types based on ports and cable specs</li>
+    </ul>
+  </li>
+  <li>network racks
+    <ul>
+      <li>chassis holding patch panels, switches and router</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="power-over-ethernet">Power over Ethernet</h2>
+
+<p>Used ethernet cable to carry electrical power. Can place a LAN in area that does not have power.</p>
+
+<ul>
+  <li>common for wireless access points</li>
+  <li>IEEE 802.3bt next gen POE
+    <ul>
+      <li>cameras</li>
+      <li>LED</li>
+      <li>terminals</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="ethernet-over-power">Ethernet over Power</h2>
+
+<p>Transmit data using common electrical wiring.</p>
+
+<p>Ideal when it is not possible to run cables or extend WIFI.</p>
+
+<ul>
+  <li>requires outlet and adapter</li>
+</ul>
+
+<h2 id="firewalls">Firewalls</h2>
+
+<p>Allow or deny conenctions to a network based on a set of rules.</p>
+
+<ul>
+  <li>allow or deny connection with rules</li>
+  <li>rules are based on IP addresses and ports</li>
+  <li>stateful filters maintain session state info</li>
+  <li>protect against outside threats</li>
+  <li>hardware
+    <ul>
+      <li>placed between LAN and internet</li>
+      <li>port and IP rules</li>
+      <li>act as content filter, VPN concentrator, honeypot</li>
+    </ul>
+  </li>
+  <li>software
+    <ul>
+      <li>runs on host as an app</li>
+      <li>control internet access over ports</li>
+      <li>is host is compromised so is the firewall</li>
+    </ul>
+  </li>
+  <li>content filters
+    <ul>
+      <li>component of a firewall</li>
+      <li>analyze packets and allow/deny with rules</li>
+      <li>common filters include executable, emails, websites</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="cloud-network-controllers">Cloud Network Controllers</h2>
+
+<p>Component that controls the flow of traffic from access points through networks. The network controller configures and manages all access points.</p>
+
+<ul>
+  <li>on premise or cloud controler backhaul
+    <ul>
+      <li>communinication is tunneled back to controller</li>
+      <li>control plane contains instructions and rules</li>
+      <li>data plane is acutal traffic</li>
+    </ul>
+  </li>
+  <li>cloud managed wireless LAN
+    <ul>
+      <li>virtual controller</li>
+      <li>located in public cloud</li>
+      <li>connects remote LANS</li>
+      <li>controller software and traffic accessed over the web</li>
+    </ul>
+  </li>
+</ul>
