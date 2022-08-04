@@ -40,15 +40,15 @@
 
 <p>Within <code class="language-plaintext highlighter-rouge">export.xml</code> the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> record type holds heart rate data:</p>
 
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Record</span> <span class="na">type=</span><span class="s">"HKQuantityTypeIdentifierHeartRate"</span> 
-    <span class="err">...</span>
-    <span class="na">unit=</span><span class="s">"count/min"</span> 
-    <span class="na">creationDate=</span><span class="s">"2019-03-02 20:42:24 -0500"</span> 
-    <span class="na">startDate=</span><span class="s">"2019-03-02 19:47:18 -0500"</span> 
-    <span class="na">endDate=</span><span class="s">"2019-03-02 19:47:18 -0500"</span> 
-    <span class="na">value=</span><span class="s">"79"</span><span class="nt">&gt;</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Record type="HKQuantityTypeIdentifierHeartRate" 
     ...
-<span class="nt">&lt;/Record&gt;</span>
+    unit="count/min" 
+    creationDate="2019-03-02 20:42:24 -0500" 
+    startDate="2019-03-02 19:47:18 -0500" 
+    endDate="2019-03-02 19:47:18 -0500" 
+    value="79"&gt;
+    ...
+&lt;/Record&gt;
 </code></pre></div></div>
 
 <h2 id="parse-heart-rate-data-with-python">Parse heart rate data with python</h2>
