@@ -1,6 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-08-04T13:30:27-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-08-04T18:08:22-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
 
-<p>Below are notes on each scenario and associated tools and protocols. Adminstrative permissions, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[The text DevOps for the Desperate covers a range of scenarios for troubleshooting issues on a remote linux host.]]></summary></entry><entry><title type="html">Parsing Apple Health Data</title><link href="http://localhost:4000/2022/07/26/parsing-apple-health-data.html" rel="alternate" type="text/html" title="Parsing Apple Health Data" /><published>2022-07-26T00:00:00-05:00</published><updated>2022-07-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/26/parsing-apple-health-data</id><content type="html" xml:base="http://localhost:4000/2022/07/26/parsing-apple-health-data.html"><![CDATA[<p>Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features.</p>
+<p>Below are notes on each scenario and associated tools and protocols. Adminstrative permissions, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
+
+<h2 id="how-to-troubleshoot">How to troubleshoot</h2>
+
+<ol>
+  <li>Start simple</li>
+  <li>Build mental model</li>
+  <li>Develop a theory</li>
+  <li>Use consistent tools</li>
+  <li>Keep notes</li>
+  <li>Ask for help</li>
+</ol>
+
+<h2 id="high-load-average">High load average</h2>
+
+<p>The linux metric <code class="language-plaintext highlighter-rouge">load average</code> indicates how busy a host is. CPU usage and disk I/O is used to compute the metric. If a host is in an impaired state load average may be a factor.</p>
+
+<p>To troubleshoot first examine load average and then identify processes contributing to a high load.
+As a <em>general</em> rule if load average is greater than CPU core count there may be stalled processes impacting performance.</p>
+
+<h3 id="uptime">uptime</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">uptime</code> command displays how long the host has been running, number of users, and 1/5/15 minute load averages. Note the difference in load times to infer if the host is expierncing a high average load over time. If load is greater than CPU core count, continue investigating.</p>
+
+<h3 id="top">top</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">top</code> command provides information about processes running on the host. It provides CPU, memory, and process information. This tool refreshes itself every 3.0 seconds, so let it run for several cycles and note the differences between values.</p>
+
+<p>Key <code class="language-plaintext highlighter-rouge">top</code> columns are:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">PID</code></li>
+  <li><code class="language-plaintext highlighter-rouge">RES</code></li>
+  <li><code class="language-plaintext highlighter-rouge">%CPU</code></li>
+  <li><code class="language-plaintext highlighter-rouge">%MEM</code></li>
+  <li><code class="language-plaintext highlighter-rouge">COMMAND</code></li>
+</ol>
+
+<p>If a process <code class="language-plaintext highlighter-rouge">PID</code> has high <code class="language-plaintext highlighter-rouge">%CPU</code> or <code class="language-plaintext highlighter-rouge">%MEM</code> it may be contributing to high load averages. The <code class="language-plaintext highlighter-rouge">COMMAND</code> field indicates the name of the process and can be used as a starting point to investigate the further.</p>
+
+<h2 id="high-memory-usage">High memory usage</h2>
+
+<h3 id="free">free</h3>
+
+<h3 id="vmstat">vmstat</h3>
+
+<h3 id="ps">ps</h3>
+
+<h2 id="high-iowait">High iowait</h2>
+<h2 id="host-name-resolution-failure">Host name resolution failure</h2>
+<h2 id="out-of-disk-space">Out of disk space</h2>
+<h2 id="connection-refused">Connection refused</h2>
+<h2 id="searching-logs">Searching logs</h2>
+<h2 id="probing-processes">Probing processes</h2>]]></content><author><name></name></author><summary type="html"><![CDATA[The text DevOps for the Desperate covers a range of scenarios for troubleshooting issues on a remote linux host.]]></summary></entry><entry><title type="html">Parsing Apple Health Data</title><link href="http://localhost:4000/2022/07/26/parsing-apple-health-data.html" rel="alternate" type="text/html" title="Parsing Apple Health Data" /><published>2022-07-26T00:00:00-05:00</published><updated>2022-07-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/07/26/parsing-apple-health-data</id><content type="html" xml:base="http://localhost:4000/2022/07/26/parsing-apple-health-data.html"><![CDATA[<p>Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features.</p>
 
 <p>Below is a protocol for streaming heart rate telemetry from a large <code class="language-plaintext highlighter-rouge">xml</code> document into a simple <code class="language-plaintext highlighter-rouge">csv</code> file on a personal linux laptop.</p>
 

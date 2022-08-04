@@ -1,0 +1,97 @@
+I"t<p>Apple provides easy access to personal health data. The challenge is parsing the blob of data and extracting useful features.</p>
+
+<p>Below is a protocol for streaming heart rate telemetry from a large <code class="language-plaintext highlighter-rouge">xml</code> document into a simple <code class="language-plaintext highlighter-rouge">csv</code> file on a personal linux laptop.</p>
+
+<p>Tools:</p>
+
+<ul>
+  <li><a href="https://gist.github.com/hoffa/936db2bb85e134709cd263dd358ca309">original idea</a></li>
+  <li><a href="https://docs.python.org/3/library/json.html?highlight=json#module-json">python json module</a></li>
+  <li><a href="https://docs.python.org/3/library/xml.etree.elementtree.html">python xml api</a></li>
+  <li><a href="https://stedolan.github.io/jq/">jq json processor</a></li>
+</ul>
+
+<h2 id="retrieve-health-data">Retrieve health data</h2>
+
+<ol>
+  <li>Go to health app on iphone</li>
+  <li>Tap profile icon and scroll to bottom</li>
+  <li>Select “export all health data” option</li>
+  <li>Push <code class="language-plaintext highlighter-rouge">export.zip</code> to cloud storage</li>
+  <li>Retrieve and extract archive on local machine</li>
+</ol>
+
+<p>The export process may take several minutes. Archive could be 10s of MB.</p>
+
+<p>The extracted health data has the following structure:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export
+└── apple_health_export
+    ├── export_cda.xml
+    ├── export.xml
+    └── workout-routes
+        ├── route_2019-03-11_1.19pm.gpx
+        ├── route_2019-03-12_1.29pm.gpx
+        ├── route_2019-03-13_6.58pm.gpx
+        ├── ......
+</code></pre></div></div>
+
+<p>All health telemetry is rolled up in the <code class="language-plaintext highlighter-rouge">export.xml</code> file. This file can be 100s of MB.</p>
+
+<p>Within <code class="language-plaintext highlighter-rouge">export.xml</code> the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> record type holds heart rate data:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Record type="HKQuantityTypeIdentifierHeartRate" 
+    ...
+    unit="count/min" 
+    creationDate="2019-03-02 20:42:24 -0500" 
+    startDate="2019-03-02 19:47:18 -0500" 
+    endDate="2019-03-02 19:47:18 -0500" 
+    value="79"&gt;
+    ...
+&lt;/Record&gt;
+</code></pre></div></div>
+
+<h2 id="parse-heart-rate-data-with-python">Parse heart rate data with python</h2>
+
+<p>Each record in <code class="language-plaintext highlighter-rouge">export.xml</code> can be parsed with the python xml api <code class="language-plaintext highlighter-rouge">iterparse</code> function and filtered using the <code class="language-plaintext highlighter-rouge">HKQuantityTypeIdentifierHeartRate</code> type.</p>
+
+<p>Filtered heart rate records are then converted from <code class="language-plaintext highlighter-rouge">xml</code> to <code class="language-plaintext highlighter-rouge">json</code> and printed to a terminal for the next processing step.</p>
+
+<p>Depending on the size of the <code class="language-plaintext highlighter-rouge">export.xml</code> the python script may run for several minutes:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># parse.py
+</span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">import</span> <span class="n">iterparse</span>
+
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">iterparse</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">elem</span><span class="p">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">"Record"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">elem</span><span class="p">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"HKQuantityTypeIdentifierHeartRate"</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">elem</span><span class="p">.</span><span class="n">attrib</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="stream-heart-rate-json-into-csv-with-jq">Stream heart rate json into csv with jq</h2>
+
+<p>Now that <code class="language-plaintext highlighter-rouge">json</code> like heart rate records are being printed to the terminal they can be picked up in a unix style pipeline.</p>
+
+<p>The pipeline will stream heart rate data into <code class="language-plaintext highlighter-rouge">jq</code> to extract telemetry and then pump formatted data into a clean <code class="language-plaintext highlighter-rouge">csv</code>.</p>
+
+<p>The entire pipeline can be ran in a bash terminal:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 parse.py data/export.xml | <span class="se">\</span>
+jq <span class="nt">-r</span> <span class="s1">'[.endDate, .type, .unit, .value] | @csv'</span> <span class="se">\</span>
+<span class="o">&gt;</span> data/heart_rate.csv
+</code></pre></div></div>
+
+<p>Now the fully parsed and neatly formatted heart rate data can be picked up by <code class="language-plaintext highlighter-rouge">pandas</code> and other tools for deeper analysis.</p>
+
+<p>If other records need to be extracted:</p>
+
+<ol>
+  <li>Modify the <code class="language-plaintext highlighter-rouge">parse.py</code> script to filter on a given type</li>
+  <li>Adjust the arguments in the <code class="language-plaintext highlighter-rouge">jq</code> command</li>
+  <li>Define a different <code class="language-plaintext highlighter-rouge">csv</code> name</li>
+</ol>
+
+<p>While not the most performant, this method can reliably parse a large Apple health <code class="language-plaintext highlighter-rouge">export.xml</code> on a personal linux laptop.</p>
+:ET
