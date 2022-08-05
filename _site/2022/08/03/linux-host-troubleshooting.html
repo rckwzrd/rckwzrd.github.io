@@ -53,6 +53,8 @@
 
 <h2 id="how-to-troubleshoot">How to troubleshoot</h2>
 
+<p>A mental approach:</p>
+
 <ol>
   <li>Start simple</li>
   <li>Build mental model</li>
@@ -64,7 +66,7 @@
 
 <h2 id="high-load-average">High load average</h2>
 
-<p>The linux metric <code class="language-plaintext highlighter-rouge">load average</code> indicates how busy a host is. CPU usage and disk I/O is used to compute the metric. If a host is in an impaired state load average may be a factor.</p>
+<p>The linux metric <code class="language-plaintext highlighter-rouge">load average</code> indicates how busy a host is. CPU usage and disk IO is used to compute the metric. If a host is in an impaired state load average may be a factor.</p>
 
 <p>To troubleshoot first examine load average and then identify processes contributing to a high load.
 As a general rule if load average is greater than CPU core count there may be stalled processes impacting performance.</p>
@@ -81,7 +83,7 @@ As a general rule if load average is greater than CPU core count there may be st
 
 <h2 id="high-memory-usage">High memory usage</h2>
 
-<p>Spikes in traffic, memory leaks, or failing applications can cause memory to be consumed at  high rates. By design, linux allocates all memory to cache and buffers also making free memory appear low.</p>
+<p>Spikes in traffic, memory leaks, or failing applications can cause memory to be consumed at high rates. By design, linux allocates all memory to cache and buffers also making free memory appear low.</p>
 
 <p>The first step is to confirm that the host is really running low on memory or if the kernel is simply swapping cached and buffered memory between processes. Then move to identify the memory consuming processes and handle them.</p>
 
@@ -93,7 +95,7 @@ As a general rule if load average is greater than CPU core count there may be st
 
 <h3 id="vmstat">vmstat</h3>
 
-<p>The <code class="language-plaintext highlighter-rouge">vmstat 1 5</code> command provides information about processes, memory, I/O, disks, and CPU state. The <code class="language-plaintext highlighter-rouge">1 5</code> arguements will set <code class="language-plaintext highlighter-rouge">vmstat</code> to poll the host for information 5 times every minute. This makes memory trends easier to spot.</p>
+<p>The <code class="language-plaintext highlighter-rouge">vmstat 1 5</code> command provides information about processes, memory, IO, disks, and CPU state. The <code class="language-plaintext highlighter-rouge">1 5</code> arguements will set <code class="language-plaintext highlighter-rouge">vmstat</code> to poll the host for information 5 times every minute. This makes memory trends easier to spot.</p>
 
 <p>The first row of data in the report is system average since boot. The <code class="language-plaintext highlighter-rouge">memory</code> sections provides information on memory moving between <code class="language-plaintext highlighter-rouge">free</code>, <code class="language-plaintext highlighter-rouge">buff</code>, and <code class="language-plaintext highlighter-rouge">cache</code>. The <code class="language-plaintext highlighter-rouge">swap</code> section shows memory being paged in and out of the disk. Low relative free memory and lots of swap activity indicate that the host consuming high rates of free memory and relying swapped disk memory.</p>
 
@@ -105,9 +107,22 @@ As a general rule if load average is greater than CPU core count there may be st
 
 <h2 id="high-iowait">High iowait</h2>
 
-<p>When a host spends to much time waiting fo disk I/O it is suffering from high memory usage.</p>
+<p>A host has high <code class="language-plaintext highlighter-rouge">iowait</code> when it is spending too much time waiting for disk IO. This metric is measured by tracking the percentage of time a CPU is idle while waiting for IO disk request. High <code class="language-plaintext highlighter-rouge">iowait</code> creates higher average load and CPU usage. Intense application read and writing or slow network storage can be the root cause.</p>
 
-<h2 id="host-name-resolution-failure">Host name resolution failure</h2>
+<p>A small amount of <code class="language-plaintext highlighter-rouge">iowait</code> is normal on a modern system. The challenge is differentiating normal <code class="language-plaintext highlighter-rouge">iowait</code> with sustained high <code class="language-plaintext highlighter-rouge">iowait</code> over a period. After identifying high <code class="language-plaintext highlighter-rouge">iowait</code> move to finding the process responsible.</p>
+
+<h3 id="iostat">iostat</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">iostat -xz 1 20</code> command reports IO and CPU stats for storage devices mounted to the host. The flag <code class="language-plaintext highlighter-rouge">-xz 1 20</code> polls the system 20 times every second and returns an extended statistic format. The <code class="language-plaintext highlighter-rouge">%iowait</code> column will show what percent of time the CPU is waiting on disk requests. The <code class="language-plaintext highlighter-rouge">w/s</code> column indicates the number of writes per second hitting a disk and the <code class="language-plaintext highlighter-rouge">util</code> column indicates disk utilization.</p>
+
+<p>Reviewing polling results for a period of time should help identify if sustained high <code class="language-plaintext highlighter-rouge">iowait</code> is affecting the host.</p>
+
+<h3 id="iotop">iotop</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo iotop -oPab</code> command displays IO usage relative to processes on the host. It is similiar to <code class="language-plaintext highlighter-rouge">top</code>. The flag <code class="language-plaintext highlighter-rouge">-oPab</code> will constantly poll the host and return cummulative IO stats. Elevated permissions are required to run <code class="language-plaintext highlighter-rouge">iotop</code>. The <code class="language-plaintext highlighter-rouge">IO</code> column will show IO usage and the <code class="language-plaintext highlighter-rouge">PID</code> and <code class="language-plaintext highlighter-rouge">COMMAND</code> columns can be used to identify process.</p>
+
+<p>Reviewing the polling results will help identify what process or proccesses are creating high <code class="language-plaintext highlighter-rouge">iowait</code>.</p>
+
 <h2 id="out-of-disk-space">Out of disk space</h2>
 <h2 id="connection-refused">Connection refused</h2>
 <h2 id="searching-logs">Searching logs</h2>
