@@ -4,11 +4,15 @@ layout: post
 
 The text [DevOps for the Desperate](https://www.goodreads.com/book/show/59879642-devops-for-the-desperate) covers a range of scenarios for troubleshooting issues on a remote linux host.
 
-Below are notes on each scenario and associated tools and protocols. Basic `cli` knowledge, `sudo` rights, and `ssh` access are assumed. 
+Below are notes on each scenario and the tools used to investigate. Basic `cli` knowledge, `sudo` rights, and `ssh` access are assumed. 
+
+**table of contents**
 
 ## How to troubleshoot
 
-A mental approach:
+Before troubleshooting can begin it is important to have a framework to guide the investigation.
+
+A basic framework:
 
 1. Start simple
 2. Build mental model
@@ -80,6 +84,22 @@ The `sudo iotop -oPab` command displays IO usage relative to processes on the ho
 Reviewing the polling results will help identify what process or proccesses are creating high `iowait`.
 
 ##  Out of disk space
+
+At some point a host will run out of disk space. This can be caused by an application, accumulated logs, or build up of files. The drive and file system with low disk space needs to be identified first. Then the isolated drive can be searched to locate the files consuming large amounts of disk space.
+
+### df
+
+The `df -h` command displays disk usage on all mounted filesystems. The flag `-h` returns a human readable output. Review the `size`, `used`, and `use%` columns to evaluate what disks under `filesystem` are close to capacity.
+
+### find
+
+The `sudo find / -type f -size +100M -exec du -ah {} + | sort -hr | head` command searches a specified portion of the filesystem for directories and files that match a criteria. In this case the entire command searches the root filesystem for all files greater than 100mb, sorts by size, and then displays the top ten largest files. Elevated permissions are required. Evaluating the output will provide large files to review and a link to the processes filling the disk.
+
+### lsof
+
+The `sudo lsof /full/path/to/file` command will list the processes writing to an open file. Elevated permissions and full file path are required. Use the `COMMAND` and `PID` to identify the process that is writing to the large file.
+
+
 ##  Connection refused
 ##  Searching logs
 ##  Probing processes

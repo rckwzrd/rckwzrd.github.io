@@ -49,11 +49,15 @@
   <div class="post-content e-content" itemprop="articleBody">
     <p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
 
-<p>Below are notes on each scenario and associated tools and protocols. Basic <code class="language-plaintext highlighter-rouge">cli</code> knowledge, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
+<p>Below are notes on each scenario and the tools used to investigate. Basic <code class="language-plaintext highlighter-rouge">cli</code> knowledge, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
+
+<p><strong>table of contents</strong></p>
 
 <h2 id="how-to-troubleshoot">How to troubleshoot</h2>
 
-<p>A mental approach:</p>
+<p>Before troubleshooting can begin it is important to have a framework to guide the investigation.</p>
+
+<p>A basic framework:</p>
 
 <ol>
   <li>Start simple</li>
@@ -124,6 +128,21 @@ As a general rule if load average is greater than CPU core count there may be st
 <p>Reviewing the polling results will help identify what process or proccesses are creating high <code class="language-plaintext highlighter-rouge">iowait</code>.</p>
 
 <h2 id="out-of-disk-space">Out of disk space</h2>
+
+<p>At some point a host will run out of disk space. This can be caused by an application, accumulated logs, or build up of files. The drive and file system with low disk space needs to be identified first. Then the isolated drive can be searched to locate the files consuming large amounts of disk space.</p>
+
+<h3 id="df">df</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">df -h</code> command displays disk usage on all mounted filesystems. The flag <code class="language-plaintext highlighter-rouge">-h</code> returns a human readable output. Review the <code class="language-plaintext highlighter-rouge">size</code>, <code class="language-plaintext highlighter-rouge">used</code>, and <code class="language-plaintext highlighter-rouge">use%</code> columns to evaluate what disks under <code class="language-plaintext highlighter-rouge">filesystem</code> are close to capacity.</p>
+
+<h3 id="find">find</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo find / -type f -size +100M -exec du -ah {} + | sort -hr | head</code> command searches a specified portion of the filesystem for directories and files that match a criteria. In this case the entire command searches the root filesystem for all files greater than 100mb, sorts by size, and then displays the top ten largest files. Elevated permissions are required. Evaluating the output will provide large files to review and a link to the processes filling the disk.</p>
+
+<h3 id="lsof">lsof</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo lsof /full/path/to/file</code> command will list the processes writing to an open file. Elevated permissions and full file path are required. Use the <code class="language-plaintext highlighter-rouge">COMMAND</code> and <code class="language-plaintext highlighter-rouge">PID</code> to identify the process that is writing to the large file.</p>
+
 <h2 id="connection-refused">Connection refused</h2>
 <h2 id="searching-logs">Searching logs</h2>
 <h2 id="probing-processes">Probing processes</h2>
