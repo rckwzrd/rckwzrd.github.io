@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-08-04T18:08:22-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-08-05T06:45:33-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
 
 <p>Below are notes on each scenario and associated tools and protocols. Adminstrative permissions, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
 
@@ -28,26 +28,36 @@ As a <em>general</em> rule if load average is greater than CPU core count there 
 
 <p>The <code class="language-plaintext highlighter-rouge">top</code> command provides information about processes running on the host. It provides CPU, memory, and process information. This tool refreshes itself every 3.0 seconds, so let it run for several cycles and note the differences between values.</p>
 
-<p>Key <code class="language-plaintext highlighter-rouge">top</code> columns are:</p>
-<ol>
-  <li><code class="language-plaintext highlighter-rouge">PID</code></li>
-  <li><code class="language-plaintext highlighter-rouge">RES</code></li>
-  <li><code class="language-plaintext highlighter-rouge">%CPU</code></li>
-  <li><code class="language-plaintext highlighter-rouge">%MEM</code></li>
-  <li><code class="language-plaintext highlighter-rouge">COMMAND</code></li>
-</ol>
-
 <p>If a process <code class="language-plaintext highlighter-rouge">PID</code> has high <code class="language-plaintext highlighter-rouge">%CPU</code> or <code class="language-plaintext highlighter-rouge">%MEM</code> it may be contributing to high load averages. The <code class="language-plaintext highlighter-rouge">COMMAND</code> field indicates the name of the process and can be used as a starting point to investigate the further.</p>
 
 <h2 id="high-memory-usage">High memory usage</h2>
 
+<p>Spikes in traffic, memory leaks, or failing applications can cause memory to be consumed at  high rates. By design, linux allocates all memory to cache and buffers also making free memory appear low.</p>
+
+<p>The first step is to confirm that the host is really running low on memory or if the kernel is simply swapping cached and buffered memory between processes. Then move to identify the memory consuming processes and handle them.</p>
+
 <h3 id="free">free</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">free -hm</code> command displays free and used system memory at the time it is run. The <code class="language-plaintext highlighter-rouge">-hm</code> flag outputs memory usage in a human readable format. The <code class="language-plaintext highlighter-rouge">mem:</code> row indicates actual RAM usages while the <code class="language-plaintext highlighter-rouge">swap:</code> row is related to memory written to disk.</p>
+
+<p>If the <code class="language-plaintext highlighter-rouge">free</code> column in the <code class="language-plaintext highlighter-rouge">swap</code> row is low the host is writing memory to the disk and running slow. The <code class="language-plaintext highlighter-rouge">used</code> and <code class="language-plaintext highlighter-rouge">free</code> columns can be misleading. Reference the <code class="language-plaintext highlighter-rouge">available</code> column to get a feel for how much memory is actually available for new processes.</p>
 
 <h3 id="vmstat">vmstat</h3>
 
+<p>The <code class="language-plaintext highlighter-rouge">vmstat 1 5</code> command provides information about processes, memory, I/O, disks, and CPU state. The <code class="language-plaintext highlighter-rouge">1 5</code> arguements will set <code class="language-plaintext highlighter-rouge">vmstat</code> to poll the host for information 5 times every minute. This makes memory trends easier to spot.</p>
+
+<p>The first row of data in the report is system average since boot. The <code class="language-plaintext highlighter-rouge">memory</code> sections provides information on memory moving between <code class="language-plaintext highlighter-rouge">free</code>, <code class="language-plaintext highlighter-rouge">buff</code>, and <code class="language-plaintext highlighter-rouge">cache</code>. The <code class="language-plaintext highlighter-rouge">swap</code> section shows memory being paged in and out of the disk. Low relative free memory and lots of swap activity indicate that host consuming high rates of free memory and relying swapped disk memory.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">r</code> column indicates the number of processes waiting to run while the <code class="language-plaintext highlighter-rouge">b</code> column indicates the number of processes sleeping. High counts in the <code class="language-plaintext highlighter-rouge">r</code> and <code class="language-plaintext highlighter-rouge">b</code> columns are good bottleneck indicators. High count in <code class="language-plaintext highlighter-rouge">r</code> indicates a possible CPU bottleneck. High count in <code class="language-plaintext highlighter-rouge">b</code> indicates that the host is waiting on disk or network I/O.</p>
+
 <h3 id="ps">ps</h3>
 
+<p>The <code class="language-plaintext highlighter-rouge">ps -efly --sort=-rss | head</code> command provides a snapshot of all running processes and memory usage. The <code class="language-plaintext highlighter-rouge">efly --sort=-rss | head</code> flag sorts the processes by highest memory usage and shows the top ten results. The <code class="language-plaintext highlighter-rouge">CMD</code> column in the output shows the name of each process. The <code class="language-plaintext highlighter-rouge">RSS</code> column gives the amount of memory being used by the process in kilobytes.</p>
+
 <h2 id="high-iowait">High iowait</h2>
+
+<p>When a host spends to much time waiting fo disk I/O it is suffering from high memory usage.</p>
+
 <h2 id="host-name-resolution-failure">Host name resolution failure</h2>
 <h2 id="out-of-disk-space">Out of disk space</h2>
 <h2 id="connection-refused">Connection refused</h2>
