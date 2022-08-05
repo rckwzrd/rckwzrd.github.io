@@ -4,7 +4,7 @@ layout: post
 
 The text [DevOps for the Desperate](https://www.goodreads.com/book/show/59879642-devops-for-the-desperate) covers a range of scenarios for troubleshooting issues on a remote linux host.
 
-Below are notes on each scenario and associated tools and protocols. Adminstrative permissions, `sudo` rights, and `ssh` access are assumed. 
+Below are notes on each scenario and associated tools and protocols. Basic `cli` knowledge, `sudo` rights, and `ssh` access are assumed. 
 
 ## How to troubleshoot
 
@@ -21,7 +21,7 @@ Below are notes on each scenario and associated tools and protocols. Adminstrati
 The linux metric `load average` indicates how busy a host is. CPU usage and disk I/O is used to compute the metric. If a host is in an impaired state load average may be a factor.
 
 To troubleshoot first examine load average and then identify processes contributing to a high load.
-As a *general* rule if load average is greater than CPU core count there may be stalled processes impacting performance.
+As a general rule if load average is greater than CPU core count there may be stalled processes impacting performance.
 
 ### uptime
 
@@ -49,9 +49,9 @@ If the `free` column in the `swap` row is low the host is writing memory to the 
 
 The `vmstat 1 5` command provides information about processes, memory, I/O, disks, and CPU state. The `1 5` arguements will set `vmstat` to poll the host for information 5 times every minute. This makes memory trends easier to spot. 
 
-The first row of data in the report is system average since boot. The `memory` sections provides information on memory moving between `free`, `buff`, and `cache`. The `swap` section shows memory being paged in and out of the disk. Low relative free memory and lots of swap activity indicate that host consuming high rates of free memory and relying swapped disk memory.
+The first row of data in the report is system average since boot. The `memory` sections provides information on memory moving between `free`, `buff`, and `cache`. The `swap` section shows memory being paged in and out of the disk. Low relative free memory and lots of swap activity indicate that the host consuming high rates of free memory and relying swapped disk memory.
 
-The `r` column indicates the number of processes waiting to run while the `b` column indicates the number of processes sleeping. High counts in the `r` and `b` columns are good bottleneck indicators. High count in `r` indicates a possible CPU bottleneck. High count in `b` indicates that the host is waiting on disk or network I/O.
+The `r` column indicates the number of processes waiting to run while the `b` column indicates the number of processes sleeping. High count in `r` indicates a possible CPU bottleneck. High count in `b` indicates that the host is waiting on disk or network I/O.
 
 ### ps
 
