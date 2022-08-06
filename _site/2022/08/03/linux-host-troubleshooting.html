@@ -51,13 +51,9 @@
 
 <p>Below are notes on each scenario and the tools used to investigate. Basic <code class="language-plaintext highlighter-rouge">cli</code> knowledge, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
 
-<p><strong>table of contents</strong></p>
-
 <h2 id="how-to-troubleshoot">How to troubleshoot</h2>
 
 <p>Before troubleshooting can begin it is important to have a framework to guide the investigation.</p>
-
-<p>A basic framework:</p>
 
 <ol>
   <li>Start simple</li>
@@ -144,8 +140,21 @@ As a general rule if load average is greater than CPU core count there may be st
 <p>The <code class="language-plaintext highlighter-rouge">sudo lsof /full/path/to/file</code> command will list the processes writing to an open file. Elevated permissions and full file path are required. Use the <code class="language-plaintext highlighter-rouge">COMMAND</code> and <code class="language-plaintext highlighter-rouge">PID</code> to identify the process that is writing to the large file.</p>
 
 <h2 id="connection-refused">Connection refused</h2>
-<h2 id="searching-logs">Searching logs</h2>
-<h2 id="probing-processes">Probing processes</h2>
+
+<p>When a host is impaired its internal APIs may refuse connections over a network. When inspecting application logs a <code class="language-plaintext highlighter-rouge">connection refused</code> error over a port may be observed. Troubleshooting will involve checking network status to and from the host.</p>
+
+<h3 id="curl">curl</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">curl</code> command is used to check if another webserver is responding to requests. This will help confirm if the impaired host is completely down for all users. If the internal API is impaired a <code class="language-plaintext highlighter-rouge">connection refused</code> or <code class="language-plaintext highlighter-rouge">connection timeout</code> may be returned. This implies the message packet is getting dropped at the host port or firewall.</p>
+
+<h3 id="ss">ss</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo ss -l -n -p | grep 8080</code> command will dump socket information on a host. It can be used to check if the API is actually listening on a port. The flag <code class="language-plaintext highlighter-rouge">-l -n -p</code> pulls all listening sockets, does not resolve <code class="language-plaintext highlighter-rouge">HTTP</code>/<code class="language-plaintext highlighter-rouge">SSH</code>, and reports the process using the process. The output is piped to <code class="language-plaintext highlighter-rouge">grep</code> to search for the desired port. Elevated permissions are required to see all processes.</p>
+
+<h3 id="tcpdump">tcpdump</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo tcpdump -ni any tcp port 8080</code> command can be used capture network traffic on a host. This will verify if traffic is reaching the impaired host. Executing the command will begin capturing and inspecting <code class="language-plaintext highlighter-rouge">tcp</code> packets recieved on all interfaces. The flag <code class="language-plaintext highlighter-rouge">-ni any tcp</code> stops <code class="language-plaintext highlighter-rouge">dns</code> resolution and tells <code class="language-plaintext highlighter-rouge">tcpdump</code> to listen for traffic from <code class="language-plaintext highlighter-rouge">8080</code>. Elevated permissions required. Reviewing the flags in the output will show if connections are being refused. If repeated <code class="language-plaintext highlighter-rouge">[S]</code> and <code class="language-plaintext highlighter-rouge">[R]</code> flags are observed this implies that a remote <code class="language-plaintext highlighter-rouge">IP</code> is attempting to sync with the host but the connection is being reset.</p>
+
 
   </div><a class="u-url" href="/2022/08/03/linux-host-troubleshooting.html" hidden></a>
 </article>

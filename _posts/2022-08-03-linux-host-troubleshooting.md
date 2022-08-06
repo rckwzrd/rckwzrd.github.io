@@ -6,13 +6,10 @@ The text [DevOps for the Desperate](https://www.goodreads.com/book/show/59879642
 
 Below are notes on each scenario and the tools used to investigate. Basic `cli` knowledge, `sudo` rights, and `ssh` access are assumed. 
 
-**table of contents**
 
 ## How to troubleshoot
 
 Before troubleshooting can begin it is important to have a framework to guide the investigation.
-
-A basic framework:
 
 1. Start simple
 2. Build mental model
@@ -22,7 +19,7 @@ A basic framework:
 6. Ask for help
 
 
-##  High load average
+## High load average
 
 The linux metric `load average` indicates how busy a host is. CPU usage and disk IO is used to compute the metric. If a host is in an impaired state load average may be a factor.
 
@@ -65,7 +62,7 @@ The `r` column indicates the number of processes waiting to run while the `b` co
 The `ps -efly --sort=-rss | head` command provides a snapshot of all running processes and memory usage. The `efly --sort=-rss | head` flag sorts the processes by highest memory usage and shows the top ten results. The `CMD` column in the output shows the name of each process. The `RSS` column gives the amount of memory being used by the process in kilobytes.
 
 
-##  High iowait
+## High iowait
 
 A host has high `iowait` when it is spending too much time waiting for disk IO. This metric is measured by tracking the percentage of time a CPU is idle while waiting for IO disk request. High `iowait` creates higher average load and CPU usage. Intense application read and writing or slow network storage can be the root cause.
 
@@ -83,7 +80,7 @@ The `sudo iotop -oPab` command displays IO usage relative to processes on the ho
 
 Reviewing the polling results will help identify what process or proccesses are creating high `iowait`.
 
-##  Out of disk space
+## Out of disk space
 
 At some point a host will run out of disk space. This can be caused by an application, accumulated logs, or build up of files. The drive and file system with low disk space needs to be identified first. Then the isolated drive can be searched to locate the files consuming large amounts of disk space.
 
@@ -99,7 +96,19 @@ The `sudo find / -type f -size +100M -exec du -ah {} + | sort -hr | head` comman
 
 The `sudo lsof /full/path/to/file` command will list the processes writing to an open file. Elevated permissions and full file path are required. Use the `COMMAND` and `PID` to identify the process that is writing to the large file.
 
+## Connection refused
 
-##  Connection refused
-##  Searching logs
-##  Probing processes
+When a host is impaired its internal APIs may refuse connections over a network. When inspecting application logs a `connection refused` error over a port may be observed. Troubleshooting will involve checking network status to and from the host.
+
+### curl
+
+The `curl` command is used to check if another webserver is responding to requests. This will help confirm if the impaired host is completely down for all users. If the internal API is impaired a `connection refused` or `connection timeout` may be returned. This implies the message packet is getting dropped at the host port or firewall.
+
+### ss
+
+The `sudo ss -l -n -p | grep 8080` command will dump socket information on a host. It can be used to check if the API is actually listening on a port. The flag `-l -n -p` pulls all listening sockets, does not resolve `HTTP`/`SSH`, and reports the process using the process. The output is piped to `grep` to search for the desired port. Elevated permissions are required to see all processes. 
+
+### tcpdump
+
+The `sudo tcpdump -ni any tcp port 8080` command can be used capture network traffic on a host. This will verify if traffic is reaching the impaired host. Executing the command will begin capturing and inspecting `tcp` packets recieved on all interfaces. The flag `-ni any tcp` stops `dns` resolution and tells `tcpdump` to listen for traffic from `8080`. Elevated permissions required. Reviewing the flags in the output will show if connections are being refused. If repeated `[S]` and `[R]` flags are observed this implies that a remote `IP` is attempting to sync with the host but the connection is being reset.
+
