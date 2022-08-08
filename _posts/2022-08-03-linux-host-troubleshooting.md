@@ -11,6 +11,8 @@ Below are notes on each scenario and the tools used to investigate. Basic `cli` 
 
 Before troubleshooting can begin it is important to have a framework to guide the investigation.
 
+The following approach can be used for methodical troubleshooting:
+
 1. Start simple
 2. Build mental model
 3. Develop a theory
