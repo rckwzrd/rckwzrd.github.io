@@ -8,6 +8,8 @@ Read pro git. Integrate git with bash.
 
 [Git with Bash](https://git-scm.com/book/en/v2/Appendix-A%3A-Git-in-Other-Environments-Git-in-Bash)
 
+[Git Aliases](https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases)
+
 ## Add tab completion
 
 1. clone git project
@@ -22,4 +24,7 @@ Read pro git. Integrate git with bash.
 2. add lines to bashrc
 3. modify PS1
 4. add gif or img
+
+## Set Aliases
+
 
