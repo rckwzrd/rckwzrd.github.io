@@ -1,4 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-08-07T19:54:43-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-09-03T10:36:05-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Git With Bash</title><link href="http://localhost:4000/2022/08/29/git-with-bash.html" rel="alternate" type="text/html" title="Git With Bash" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/git-with-bash</id><content type="html" xml:base="http://localhost:4000/2022/08/29/git-with-bash.html"><![CDATA[<p>When I first installed Git I did not really know what it was for beyond interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time. I got pretty far with fundamentals and simply keeping remotes clean.</p>
+
+<p>Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellenat and free <a href="https://git-scm.com/book/en/v2">Pro Git Book</a>. This text covers the full spectrum of Git, from the basics of branching through Git’s internal state.</p>
+
+<p>One of the most actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:</p>
+
+<ol>
+  <li>enable git command tab completion</li>
+  <li>add git status info the the prompt</li>
+  <li>set aliases to chain multiple commands</li>
+</ol>
+
+<p><a href="https://git-scm.com/book/en/v2/Appendix-A%3A-Git-in-Other-Environments-Git-in-Bash">Git with Bash</a></p>
+
+<p><a href="https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases">Git Aliases</a></p>
+
+<p><a href="https://github.com/git/git">Git Source Code</a></p>
+
+<h2 id="get-git-source-code">Get git source code</h2>
+
+<ol>
+  <li>clone git project</li>
+  <li>checkout version tag</li>
+</ol>
+
+<h2 id="add-tab-completion">Add tab completion</h2>
+
+<ol>
+  <li>cp completion file to ~/</li>
+  <li>add line to bashrc and source</li>
+  <li>add gif or img</li>
+</ol>
+
+<h2 id="decorate-prompt">Decorate prompt</h2>
+
+<ol>
+  <li>cp prompt.sh to ~/</li>
+  <li>add lines to bashrc</li>
+  <li>modify PS1</li>
+  <li>add gif or img</li>
+</ol>
+
+<h2 id="set-aliases">Set Aliases</h2>]]></content><author><name></name></author><summary type="html"><![CDATA[When I first installed Git I did not really know what it was for beyond interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time. I got pretty far with fundamentals and simply keeping remotes clean.]]></summary></entry><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
 
 <p>Below are notes on each scenario and the tools used to investigate. Basic <code class="language-plaintext highlighter-rouge">cli</code> knowledge, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
 
