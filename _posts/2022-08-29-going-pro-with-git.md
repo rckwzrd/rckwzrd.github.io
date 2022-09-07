@@ -2,40 +2,102 @@
 layout: post
 ---
 
-When I first installed Git I did not really know what it was for beyond interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time. I got pretty far with fundamentals and simply keeping remotes clean.
+When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.
 
-Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellenat and free [Pro Git Book](https://git-scm.com/book/en/v2). This text covers the full spectrum of Git, from the basics of branching through Git's internal state.
+Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free [Pro Git Book](https://git-scm.com/book/en/v2). This text covers the full spectrum of Git, from the basics of branching through Git's internal state.
 
-One of the most actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:
+One of the actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:
 
-1. enable git command tab completion
-2. add git status info the the prompt
+1. Enable Git command tab completion
+2. Add Git status info the the prompt
 3. set aliases to chain multiple commands
 
+## Get source code
 
-[Git with Bash](https://git-scm.com/book/en/v2/Appendix-A%3A-Git-in-Other-Environments-Git-in-Bash)
+In order to set up tab completion and decorate the prompt we need two scripts packaged with the Git source code:
 
-[Git Aliases](https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases)
+1. Clone a copy of Git source from [Github](https://github.com/git/git)
+2. Change into the clonded Git directory
+3. Checkout the tag corresponding to the installed Git version
+4. Copy `git-completion.bash` to home 
+5. Copy `git-prompt.sh` to home 
 
-[Git Source Code](https://github.com/git/git)
+```bash
+mlr@pop-os:~/Desktop$ cd git
+```
 
-## Get git source code
+```bash
+mlr@pop-os:~/Desktop/git $ git version
+git version 2.34.1
+```
 
-1. clone git project
-2. checkout version tag
+```bash
+mlr@pop-os:~/Desktop/git $ git checkout tags/v2.34.1
+HEAD is now at e9d7761bb9 Git 2.34.1
+```
+
+```bash
+mlr@pop-os:~/Desktop/git $ cp contrib/completion/git-completion.bash ~/
+```
+
+```bash
+mlr@pop-os:~/Desktop/git $ cp contrib/completion/git-prompt.sh ~/
+```
 
 ## Add tab completion
 
-1. cp completion file to ~/
-2. add line to bashrc and source
-3. add gif or img
+To set up tab completion the `git-completion.bash` script needs to be referenced in the `.bashrc`:
+
+```bash
+# git completion
+. ~/git-completion.bash
+```
+
+This line can be added where ever it makes sense. I added the reference to the bottom of the configuration file.
+
+Now source the `.bashrc` and confirm tab completion:
+
+```bash
+mlr@pop-os:~$ source .bashrc
+```
+
+```bash
+mlr@pop-os:~$ git cl<tab>
+clean   clone
+```
 
 ## Decorate prompt
 
-1. cp prompt.sh to ~/
-2. add lines to bashrc
-3. modify PS1
-4. add gif or img
+To decorate the shell prompt the `git-prompt.sh` script also needs to be referenced in the `.bashrc`:
+
+```bash
+# git prompt
+. ~/git-prompt.sh
+```
+
+After the script reference set an environment variable to add status markers to the prompt:
+
+```bash
+# set status marker
+export GIT_PS1_SHOWDIRTYSTATE=1
+```
+
+Next locate the `PS1` prompt string in the `.bashrc`, move it to the end of the file, and append the Git prompt format string to it:
+
+```bash
+# set PS1 
+export PS1='$<current PS1>$(__git_ps1 " (%s)")\$ '
+```
+
+This part may require some trial and error to clearly append Git information to the current prompt.
+
+Checkout the comments in `git-prompt.sh` for more environment variables and general notes.
+
+Now `source` the `.bashrc` and change into a directory with a repository. Confirm that a current branch shown with some sort of marker:
+
+```bash
+mlr@pop-os:~/Desktop/rckwzrd.github.io (gh-pages *)$ 
+```
 
 ## Set Aliases
 

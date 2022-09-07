@@ -1,46 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-09-03T10:36:05-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Git With Bash</title><link href="http://localhost:4000/2022/08/29/git-with-bash.html" rel="alternate" type="text/html" title="Git With Bash" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/git-with-bash</id><content type="html" xml:base="http://localhost:4000/2022/08/29/git-with-bash.html"><![CDATA[<p>When I first installed Git I did not really know what it was for beyond interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time. I got pretty far with fundamentals and simply keeping remotes clean.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-09-07T18:16:50-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Going Pro With Git</title><link href="http://localhost:4000/2022/08/29/going-pro-with-git.html" rel="alternate" type="text/html" title="Going Pro With Git" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/going-pro-with-git</id><content type="html" xml:base="http://localhost:4000/2022/08/29/going-pro-with-git.html"><![CDATA[<p>When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.</p>
 
-<p>Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellenat and free <a href="https://git-scm.com/book/en/v2">Pro Git Book</a>. This text covers the full spectrum of Git, from the basics of branching through Git’s internal state.</p>
+<p>Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free <a href="https://git-scm.com/book/en/v2">Pro Git Book</a>. This text covers the full spectrum of Git, from the basics of branching through Git’s internal state.</p>
 
-<p>One of the most actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:</p>
+<p>One of the actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:</p>
 
 <ol>
-  <li>enable git command tab completion</li>
-  <li>add git status info the the prompt</li>
+  <li>Enable Git command tab completion</li>
+  <li>Add Git status info the the prompt</li>
   <li>set aliases to chain multiple commands</li>
 </ol>
 
-<p><a href="https://git-scm.com/book/en/v2/Appendix-A%3A-Git-in-Other-Environments-Git-in-Bash">Git with Bash</a></p>
+<h2 id="get-source-code">Get source code</h2>
 
-<p><a href="https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases">Git Aliases</a></p>
-
-<p><a href="https://github.com/git/git">Git Source Code</a></p>
-
-<h2 id="get-git-source-code">Get git source code</h2>
+<p>In order to set up tab completion and decorate the prompt we need two scripts packaged with the Git source code:</p>
 
 <ol>
-  <li>clone git project</li>
-  <li>checkout version tag</li>
+  <li>Clone a copy of Git source from <a href="https://github.com/git/git">Github</a></li>
+  <li>Change into the clonded Git directory</li>
+  <li>Checkout the tag corresponding to the installed Git version</li>
+  <li>Copy <code class="language-plaintext highlighter-rouge">git-completion.bash</code> to home</li>
+  <li>Copy <code class="language-plaintext highlighter-rouge">git-prompt.sh</code> to home</li>
 </ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~/Desktop<span class="nv">$ </span><span class="nb">cd </span>git
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~/Desktop/git <span class="nv">$ </span>git version
+git version 2.34.1
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~/Desktop/git <span class="nv">$ </span>git checkout tags/v2.34.1
+HEAD is now at e9d7761bb9 Git 2.34.1
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~/Desktop/git <span class="nv">$ </span><span class="nb">cp </span>contrib/completion/git-completion.bash ~/
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~/Desktop/git <span class="nv">$ </span><span class="nb">cp </span>contrib/completion/git-prompt.sh ~/
+</code></pre></div></div>
 
 <h2 id="add-tab-completion">Add tab completion</h2>
 
-<ol>
-  <li>cp completion file to ~/</li>
-  <li>add line to bashrc and source</li>
-  <li>add gif or img</li>
-</ol>
+<p>To set up tab completion the <code class="language-plaintext highlighter-rouge">git-completion.bash</code> script needs to be referenced in the <code class="language-plaintext highlighter-rouge">.bashrc</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># git completion</span>
+<span class="nb">.</span> ~/git-completion.bash
+</code></pre></div></div>
+
+<p>This line can be added where ever it makes sense. I added the reference to the bottom of the configuration file.</p>
+
+<p>Now source the <code class="language-plaintext highlighter-rouge">.bashrc</code> and confirm tab completion:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">source</span> .bashrc
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span>git cl&lt;tab&gt;
+clean   clone
+</code></pre></div></div>
 
 <h2 id="decorate-prompt">Decorate prompt</h2>
 
-<ol>
-  <li>cp prompt.sh to ~/</li>
-  <li>add lines to bashrc</li>
-  <li>modify PS1</li>
-  <li>add gif or img</li>
-</ol>
+<p>To decorate the shell prompt the <code class="language-plaintext highlighter-rouge">git-prompt.sh</code> script also needs to be referenced in the <code class="language-plaintext highlighter-rouge">.bashrc</code>:</p>
 
-<h2 id="set-aliases">Set Aliases</h2>]]></content><author><name></name></author><summary type="html"><![CDATA[When I first installed Git I did not really know what it was for beyond interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time. I got pretty far with fundamentals and simply keeping remotes clean.]]></summary></entry><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># git prompt</span>
+<span class="nb">.</span> ~/git-prompt.sh
+</code></pre></div></div>
+
+<p>After the script reference set an environment variable to add status markers to the prompt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set status marker</span>
+<span class="nb">export </span><span class="nv">GIT_PS1_SHOWDIRTYSTATE</span><span class="o">=</span>1
+</code></pre></div></div>
+
+<p>Next locate the <code class="language-plaintext highlighter-rouge">PS1</code> prompt string in the <code class="language-plaintext highlighter-rouge">.bashrc</code>, move it to the end of the file, and append the Git prompt format string to it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set PS1 </span>
+<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class="s1">'$&lt;current PS1&gt;$(__git_ps1 " (%s)")\$ '</span>
+</code></pre></div></div>
+
+<p>This part may require some trial and error to clearly append Git information to the current prompt.</p>
+
+<p>Checkout the comments in <code class="language-plaintext highlighter-rouge">git-prompt.sh</code> for more environment variables and general notes.</p>
+
+<p>Now <code class="language-plaintext highlighter-rouge">source</code> the <code class="language-plaintext highlighter-rouge">.bashrc</code> and change into a directory with a repository. Confirm that a current branch shown with some sort of marker:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~/Desktop/rckwzrd.github.io <span class="o">(</span>gh-pages <span class="k">*</span><span class="o">)</span><span class="nv">$ </span>
+</code></pre></div></div>
+
+<h2 id="set-aliases">Set Aliases</h2>]]></content><author><name></name></author><summary type="html"><![CDATA[When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.]]></summary></entry><entry><title type="html">Linux Host Troubleshooting</title><link href="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html" rel="alternate" type="text/html" title="Linux Host Troubleshooting" /><published>2022-08-03T00:00:00-05:00</published><updated>2022-08-03T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/03/linux-host-troubleshooting</id><content type="html" xml:base="http://localhost:4000/2022/08/03/linux-host-troubleshooting.html"><![CDATA[<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
 
 <p>Below are notes on each scenario and the tools used to investigate. Basic <code class="language-plaintext highlighter-rouge">cli</code> knowledge, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
 
