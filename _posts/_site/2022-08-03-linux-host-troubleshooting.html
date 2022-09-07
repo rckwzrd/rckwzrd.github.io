@@ -1,1 +1,207 @@
-<p>The text <a href=""></a> provides a set of</p>
+<p>The text <a href="https://www.goodreads.com/book/show/59879642-devops-for-the-desperate">DevOps for the Desperate</a> covers a range of scenarios for troubleshooting issues on a remote linux host.</p>
+
+<p>Below are notes on each scenario and the tools used to investigate. Basic <code class="language-plaintext highlighter-rouge">cli</code> knowledge, <code class="language-plaintext highlighter-rouge">sudo</code> rights, and <code class="language-plaintext highlighter-rouge">ssh</code> access are assumed.</p>
+
+<h2 id="how-to-troubleshoot">How to troubleshoot</h2>
+
+<p>Before troubleshooting can begin it is important to have a framework to guide the investigation.</p>
+
+<p>The following approach can be used for methodical troubleshooting:</p>
+
+<ol>
+  <li>Start simple</li>
+  <li>Build mental model</li>
+  <li>Develop a theory</li>
+  <li>Use consistent tools</li>
+  <li>Keep notes</li>
+  <li>Ask for help</li>
+</ol>
+
+<h2 id="high-load-average">High load average</h2>
+
+<p>The linux metric <code class="language-plaintext highlighter-rouge">load average</code> indicates how busy a host is. CPU usage and disk IO is used to compute the metric. If a host is in an impaired state load average may be a factor.</p>
+
+<p>To troubleshoot first examine load average and then identify processes contributing to a high load.
+As a general rule if load average is greater than CPU core count there may be stalled processes impacting performance.</p>
+
+<h3 id="uptime">uptime</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">uptime</code> command displays how long the host has been running, number of users, and 1/5/15 minute load averages. Note the difference in load times to infer if the host is expierncing a high average load over time. If load is greater than CPU core count, continue investigating.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">uptime
+ </span>19:28:23 up 16 min,  1 user,  load average: 0.25, 0.43, 0.36
+</code></pre></div></div>
+
+<h3 id="top">top</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">top</code> command provides information about processes running on the host. It provides CPU, memory, and process information. This tool refreshes itself every 3.0 seconds, so let it run for several cycles and note the differences between values.</p>
+
+<p>If a process <code class="language-plaintext highlighter-rouge">PID</code> has high <code class="language-plaintext highlighter-rouge">%CPU</code> or <code class="language-plaintext highlighter-rouge">%MEM</code> it may be contributing to high load averages. The <code class="language-plaintext highlighter-rouge">COMMAND</code> field indicates the name of the process and can be used as a starting point to investigate the further.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span>top
+top - 19:33:09 up 21 min,  1 user,  load average: 0.33, 0.34, 0.34
+Tasks: 295 total,   1 running, 294 sleeping,   0 stopped,   0 zombie
+%Cpu<span class="o">(</span>s<span class="o">)</span>:  0.1 us,  0.4 sy,  0.0 ni, 99.5 <span class="nb">id</span>,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :   7663.1 total,   3067.7 free,   2129.3 used,   2466.2 buff/cache
+MiB Swap:   4095.5 total,   4095.5 free,      0.0 used.   4625.7 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                
+    249 root     <span class="nt">-51</span>   0       0      0      0 S   2.3   0.0   0:16.12 irq/156-DLL0945:00                                     
+   1413 root      15  <span class="nt">-5</span> 1386604 114068  69684 S   2.0   1.5   0:32.99 Xorg                                                   
+   2261 mlr       15  <span class="nt">-5</span>  635864  54248  40084 S   1.3   0.7   0:08.50 gnome-terminal-                                        
+   1614 mlr       15  <span class="nt">-5</span> 5357140 265588 118724 S   1.0   3.4   0:32.49 gnome-shell   
+</code></pre></div></div>
+
+<h2 id="high-memory-usage">High memory usage</h2>
+
+<p>Spikes in traffic, memory leaks, or failing applications can cause memory to be consumed at high rates. By design, linux allocates all memory to cache and buffers also making free memory appear low.</p>
+
+<p>The first step is to confirm that the host is really running low on memory or if the kernel is simply swapping cached and buffered memory between processes. Then move to identify the memory consuming processes and handle them.</p>
+
+<h3 id="free">free</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">free -hm</code> command displays free and used system memory at the time it is run. The <code class="language-plaintext highlighter-rouge">-hm</code> flag outputs memory usage in a human readable format. The <code class="language-plaintext highlighter-rouge">mem:</code> row indicates actual RAM usages while the <code class="language-plaintext highlighter-rouge">swap:</code> row is related to memory written to disk.</p>
+
+<p>If the <code class="language-plaintext highlighter-rouge">free</code> column in the <code class="language-plaintext highlighter-rouge">swap</code> row is low the host is writing memory to the disk and running slow. The <code class="language-plaintext highlighter-rouge">used</code> and <code class="language-plaintext highlighter-rouge">free</code> columns can be misleading. Reference the <code class="language-plaintext highlighter-rouge">available</code> column to get a feel for how much memory is actually available for new processes.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>free <span class="nt">-hm</span>
+               total        used        free      shared  buff/cache   available
+Mem:           7.5Gi       2.1Gi       3.0Gi       643Mi       2.4Gi       4.5Gi
+Swap:          4.0Gi          0B       4.0Gi
+</code></pre></div></div>
+
+<h3 id="vmstat">vmstat</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">vmstat 1 5</code> command provides information about processes, memory, IO, disks, and CPU state. The <code class="language-plaintext highlighter-rouge">1 5</code> arguements will set <code class="language-plaintext highlighter-rouge">vmstat</code> to poll the host for information 5 times every minute. This makes memory trends easier to spot.</p>
+
+<p>The first row of data in the report is system average since boot. The <code class="language-plaintext highlighter-rouge">memory</code> sections provides information on memory moving between <code class="language-plaintext highlighter-rouge">free</code>, <code class="language-plaintext highlighter-rouge">buff</code>, and <code class="language-plaintext highlighter-rouge">cache</code>. The <code class="language-plaintext highlighter-rouge">swap</code> section shows memory being paged in and out of the disk. Low relative free memory and lots of swap activity indicate that the host consuming high rates of free memory and relying swapped disk memory.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">r</code> column indicates the number of processes waiting to run while the <code class="language-plaintext highlighter-rouge">b</code> column indicates the number of processes sleeping. High count in <code class="language-plaintext highlighter-rouge">r</code> indicates a possible CPU bottleneck. High count in <code class="language-plaintext highlighter-rouge">b</code> indicates that the host is waiting on disk or network I/O.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span>vmstat 1 5
+procs <span class="nt">-----------memory----------</span> <span class="nt">---swap--</span> <span class="nt">-----io----</span> <span class="nt">-system--</span> <span class="nt">------cpu-----</span>
+ r  b   swpd   free   buff  cache   si   so    bi    bo   <span class="k">in   </span>cs us sy <span class="nb">id </span>wa st
+ 2  0      0 3092416 107712 2437708    0    0   137    72  342  468  2  1 97  0  0
+ 0  0      0 3085652 107712 2443952    0    0     0    96 1309 1748  1  0 99  0  0
+ 0  0      0 3085400 107712 2441900    0    0     0     0 2976 3101  1  1 99  0  0
+ 0  0      0 3096512 107712 2439596    0    0     0     0 3068 2655  1  1 99  0  0
+ 0  0      0 3096260 107712 2439660    0    0     0   112  303  540  0  0 100  0  0
+
+</code></pre></div></div>
+
+<h3 id="ps">ps</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">ps -efly --sort=-rss | head</code> command provides a snapshot of all running processes and memory usage. The <code class="language-plaintext highlighter-rouge">efly --sort=-rss | head</code> flag sorts the processes by highest memory usage and shows the top ten results. The <code class="language-plaintext highlighter-rouge">CMD</code> column in the output shows the name of each process. The <code class="language-plaintext highlighter-rouge">RSS</code> column gives the amount of memory being used by the process in kilobytes.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ps <span class="nt">-efly</span> <span class="nt">--sort</span><span class="o">=</span><span class="nt">-rss</span> | <span class="nb">head
+</span>S UID          PID    PPID  C PRI  NI   RSS    SZ WCHAN  STIME TTY          TIME CMD
+S mlr         1807    1578  0  85   5 630440 345151 do_pol 19:12 ?      00:00:08 io.elementary.appcenter <span class="nt">-s</span>
+S mlr         1614    1316  2  75  <span class="nt">-5</span> 265828 1347579 do_pol 19:12 ?     00:00:41 /usr/bin/gnome-shell
+</code></pre></div></div>
+
+<h2 id="high-iowait">High iowait</h2>
+
+<p>A host has high <code class="language-plaintext highlighter-rouge">iowait</code> when it is spending too much time waiting for disk IO. This metric is measured by tracking the percentage of time a CPU is idle while waiting for IO disk request. High <code class="language-plaintext highlighter-rouge">iowait</code> creates higher average load and CPU usage. Intense application read and writing or slow network storage can be the root cause.</p>
+
+<p>A small amount of <code class="language-plaintext highlighter-rouge">iowait</code> is normal on a modern system. The challenge is differentiating normal <code class="language-plaintext highlighter-rouge">iowait</code> with sustained high <code class="language-plaintext highlighter-rouge">iowait</code> over a period. After identifying high <code class="language-plaintext highlighter-rouge">iowait</code> move to finding the process responsible.</p>
+
+<h3 id="iostat">iostat</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">iostat -xz 1 20</code> command reports IO and CPU stats for storage devices mounted to the host. The flag <code class="language-plaintext highlighter-rouge">-xz 1 20</code> polls the system 20 times every second and returns an extended statistic format. The <code class="language-plaintext highlighter-rouge">%iowait</code> column will show what percent of time the CPU is waiting on disk requests. The <code class="language-plaintext highlighter-rouge">w/s</code> column indicates the number of writes per second hitting a disk and the <code class="language-plaintext highlighter-rouge">util</code> column indicates disk utilization.</p>
+
+<p>Reviewing polling results for a period of time should help identify if sustained high <code class="language-plaintext highlighter-rouge">iowait</code> is affecting the host.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span>iostat <span class="nt">-xz</span> 1 20
+Linux 5.17.5-76051705-generic <span class="o">(</span>pop-os<span class="o">)</span> 	08/07/2022 	_x86_64_	<span class="o">(</span>8 CPU<span class="o">)</span>
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           1.86    0.23    0.85    0.14    0.00   96.93
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+dm-0             0.10      2.63     0.00   0.00    0.16    25.65    0.01      0.00     0.00   0.00    0.00     0.44    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00
+nvme0n1         25.17    938.55    15.53  38.15    0.22    37.28   21.51    520.71    15.15  41.32    1.54    24.20    0.00      0.00     0.00   0.00    0.00     0.00    0.89    0.52    0.04   1.84
+
+</code></pre></div></div>
+
+<h3 id="iotop">iotop</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo iotop -oPab</code> command displays IO usage relative to processes on the host. It is similiar to <code class="language-plaintext highlighter-rouge">top</code>. The flag <code class="language-plaintext highlighter-rouge">-oPab</code> will constantly poll the host and return cummulative IO stats. Elevated permissions are required to run <code class="language-plaintext highlighter-rouge">iotop</code>. The <code class="language-plaintext highlighter-rouge">IO</code> column will show IO usage and the <code class="language-plaintext highlighter-rouge">PID</code> and <code class="language-plaintext highlighter-rouge">COMMAND</code> columns can be used to identify process.</p>
+
+<p>Reviewing the polling results will help identify what process or proccesses are creating high <code class="language-plaintext highlighter-rouge">iowait</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">sudo </span>iotop <span class="nt">-oPab</span>
+Total DISK READ:         0.00 B/s | Total DISK WRITE:       443.33 K/s
+Current DISK READ:       0.00 B/s | Current DISK WRITE:     391.87 K/s
+    PID  PRIO  USER     DISK READ  DISK WRITE  SWAPIN      IO    COMMAND
+    352 be/3 root          0.00 B    364.00 K  ?unavailable?  <span class="o">[</span>jbd2/nvme0n1p3-8]
+    405 be/4 root          0.00 B     64.00 K  ?unavailable?  systemd-journald
+   1077 be/4 root          0.00 B     20.00 K  ?unavailable?  packagekitd
+</code></pre></div></div>
+
+<h2 id="out-of-disk-space">Out of disk space</h2>
+
+<p>At some point a host will run out of disk space. This can be caused by an application, accumulated logs, or build up of files. The drive and file system with low disk space needs to be identified first. Then the isolated drive can be searched to locate the files consuming large amounts of disk space.</p>
+
+<h3 id="df">df</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">df -h</code> command displays disk usage on all mounted filesystems. The flag <code class="language-plaintext highlighter-rouge">-h</code> returns a human readable output. Review the <code class="language-plaintext highlighter-rouge">size</code>, <code class="language-plaintext highlighter-rouge">used</code>, and <code class="language-plaintext highlighter-rouge">use%</code> columns to evaluate what disks under <code class="language-plaintext highlighter-rouge">filesystem</code> are close to capacity.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">df</span> <span class="nt">-h</span>
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           767M  1.9M  765M   1% /run
+/dev/nvme0n1p3  226G   33G  182G  16% /
+tmpfs           3.8G     0  3.8G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/nvme0n1p1  497M  362M  136M  73% /boot/efi
+/dev/nvme0n1p2  4.0G  2.6G  1.5G  64% /recovery
+tmpfs           767M  180K  767M   1% /run/user/1000
+</code></pre></div></div>
+
+<h3 id="find">find</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo find / -type f -size +100M -exec du -ah {} + | sort -hr | head</code> command searches a specified portion of the filesystem for directories and files that match a criteria. In this case the entire command searches the root filesystem for all files greater than 100mb, sorts by size, and then displays the top ten largest files. Elevated permissions are required. Evaluating the output will provide large files to review and a link to the processes filling the disk.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">sudo </span>find / <span class="nt">-type</span> f <span class="nt">-size</span> +100M <span class="nt">-exec</span> <span class="nb">du</span> <span class="nt">-ah</span> <span class="o">{}</span> + | <span class="nb">sort</span> <span class="nt">-hr</span> | <span class="nb">head
+</span>2.6G	/var/cache/pop-upgrade/recovery.iso
+2.4G	/recovery/casper-1FE5-33A5/filesystem.squashfs
+666M	/home/mlr/Desktop/export/apple_health_export/export.xml
+</code></pre></div></div>
+
+<h2 id="connection-refused">Connection refused</h2>
+
+<p>When a host is impaired its internal APIs may refuse connections over a network. When inspecting application logs a <code class="language-plaintext highlighter-rouge">connection refused</code> error over a port may be observed. Troubleshooting will involve checking network status to and from the host.</p>
+
+<h3 id="curl">curl</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">curl</code> command is used to check if another webserver is responding to requests. This will help confirm if the impaired host is completely down for all users. If the internal API is impaired a <code class="language-plaintext highlighter-rouge">connection refused</code> or <code class="language-plaintext highlighter-rouge">connection timeout</code> may be returned. This implies the message packet is getting dropped at the host port or firewall.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span>curl google.com
+&lt;HTML&gt;&lt;HEAD&gt;&lt;meta http-equiv<span class="o">=</span><span class="s2">"content-type"</span> <span class="nv">content</span><span class="o">=</span><span class="s2">"text/html;charset=utf-8"</span><span class="o">&gt;</span>
+&lt;TITLE&gt;301 Moved&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY&gt;
+&lt;H1&gt;301 Moved&lt;/H1&gt;
+The document has moved
+&lt;A <span class="nv">HREF</span><span class="o">=</span><span class="s2">"http://www.google.com/"</span><span class="o">&gt;</span>here&lt;/A&gt;.
+&lt;/BODY&gt;&lt;/HTML&gt;
+
+</code></pre></div></div>
+
+<h3 id="ss">ss</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo ss -l -n -p | grep 4000</code> command will dump socket information on a host. It can be used to check if the API is actually listening on a port. The flag <code class="language-plaintext highlighter-rouge">-l -n -p</code> pulls all listening sockets, does not resolve <code class="language-plaintext highlighter-rouge">HTTP</code>/<code class="language-plaintext highlighter-rouge">SSH</code>, and reports the process using the process. The output is piped to <code class="language-plaintext highlighter-rouge">grep</code> to search for the desired port. Elevated permissions are required to see all processes.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">sudo </span>ss <span class="nt">-l</span> <span class="nt">-n</span> <span class="nt">-p</span> | <span class="nb">grep </span>4000
+tcp   LISTEN 0   4096   127.0.0.1:4000    0.0.0.0:<span class="k">*</span>    <span class="nb">users</span>:<span class="o">((</span><span class="s2">"bundle"</span>,pid<span class="o">=</span>5253,fd<span class="o">=</span>8<span class="o">))</span>                                                            
+</code></pre></div></div>
+
+<h3 id="tcpdump">tcpdump</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">sudo tcpdump -ni any tcp port 4000</code> command can be used capture network traffic on a host. This will verify if traffic is reaching the impaired host. Executing the command will begin capturing and inspecting <code class="language-plaintext highlighter-rouge">tcp</code> packets recieved on all interfaces. The flag <code class="language-plaintext highlighter-rouge">-ni any tcp</code> stops <code class="language-plaintext highlighter-rouge">dns</code> resolution and tells <code class="language-plaintext highlighter-rouge">tcpdump</code> to listen for traffic from <code class="language-plaintext highlighter-rouge">8080</code>. Elevated permissions required. Reviewing the flags in the output will show if connections are being refused. If repeated <code class="language-plaintext highlighter-rouge">[S]</code> and <code class="language-plaintext highlighter-rouge">[R]</code> flags are observed this implies that a remote <code class="language-plaintext highlighter-rouge">IP</code> is attempting to sync with the host but the connection is being reset.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mlr@pop-os:~<span class="nv">$ </span><span class="nb">sudo </span>tcpdump <span class="nt">-ni</span> any tcp port 4000
+tcpdump: data <span class="nb">link type </span>LINUX_SLL2
+tcpdump: verbose output suppressed, use <span class="nt">-v</span><span class="o">[</span>v]... <span class="k">for </span>full protocol decode
+listening on any, link-type LINUX_SLL2 <span class="o">(</span>Linux cooked v2<span class="o">)</span>, snapshot length 262144 bytes
+19:50:24.454916 lo    In  IP 127.0.0.1.56080 <span class="o">&gt;</span> 127.0.0.1.4000: Flags <span class="o">[</span>S], <span class="nb">seq </span>2500379491, win 65495, options <span class="o">[</span>mss 65495,sackOK,TS val 1673811859 ecr 0,nop,wscale 7], length 0
+19:50:24.454927 lo    In  IP 127.0.0.1.4000 <span class="o">&gt;</span> 127.0.0.1.56080: Flags <span class="o">[</span>S.], <span class="nb">seq </span>1261009642, ack 2500379492, win 65483, options <span class="o">[</span>mss 65495,sackOK,TS val 1673811859 ecr 1673811859,nop,wscale 7], length 0
+19:50:24.454937 lo    In  IP 127.0.0.1.56080 <span class="o">&gt;</span> 127.0.0.1.4000: Flags <span class="o">[</span>.], ack 1, win 512, options <span class="o">[</span>nop,nop,TS val 1673811859 ecr 1673811859], length 0
+</code></pre></div></div>
