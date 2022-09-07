@@ -4,9 +4,9 @@ layout: post
 
 When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.
 
-Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free [Pro Git Book](https://git-scm.com/book/en/v2). This text covers the full spectrum of Git, from the basics of branching through Git's internal state.
+Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free [Pro Git](https://git-scm.com/book/en/v2) book. This text covers the full spectrum of Git, from the basics of branching through Git's internal state.
 
-One of the actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:
+One of the actionable learnings is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:
 
 1. Enable Git command tab completion
 2. Add Git status info the the prompt
@@ -17,7 +17,7 @@ One of the actionable learnings from this book is how to integrate Git with Bash
 In order to set up tab completion and decorate the prompt we need two scripts packaged with the Git source code:
 
 1. Clone a copy of Git source from [Github](https://github.com/git/git)
-2. Change into the clonded Git directory
+2. Change into the cloned Git directory
 3. Checkout the tag corresponding to the installed Git version
 4. Copy `git-completion.bash` to home 
 5. Copy `git-prompt.sh` to home 

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-09-07T18:28:23-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Going Pro With Git</title><link href="http://localhost:4000/2022/08/29/going-pro-with-git.html" rel="alternate" type="text/html" title="Going Pro With Git" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/going-pro-with-git</id><content type="html" xml:base="http://localhost:4000/2022/08/29/going-pro-with-git.html"><![CDATA[<p>When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-09-07T18:33:04-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Going Pro With Git</title><link href="http://localhost:4000/2022/08/29/going-pro-with-git.html" rel="alternate" type="text/html" title="Going Pro With Git" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/going-pro-with-git</id><content type="html" xml:base="http://localhost:4000/2022/08/29/going-pro-with-git.html"><![CDATA[<p>When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.</p>
 
-<p>Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free <a href="https://git-scm.com/book/en/v2">Pro Git Book</a>. This text covers the full spectrum of Git, from the basics of branching through Git’s internal state.</p>
+<p>Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free <a href="https://git-scm.com/book/en/v2">Pro Git</a> book. This text covers the full spectrum of Git, from the basics of branching through Git’s internal state.</p>
 
-<p>One of the actionable learnings from this book is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:</p>
+<p>One of the actionable learnings is how to integrate Git with Bash to smooth out workflows and increase project awareness. Below are some notes on how to:</p>
 
 <ol>
   <li>Enable Git command tab completion</li>
@@ -16,7 +16,7 @@
 
 <ol>
   <li>Clone a copy of Git source from <a href="https://github.com/git/git">Github</a></li>
-  <li>Change into the clonded Git directory</li>
+  <li>Change into the cloned Git directory</li>
   <li>Checkout the tag corresponding to the installed Git version</li>
   <li>Copy <code class="language-plaintext highlighter-rouge">git-completion.bash</code> to home</li>
   <li>Copy <code class="language-plaintext highlighter-rouge">git-prompt.sh</code> to home</li>
