@@ -10,7 +10,7 @@ One of the actionable learnings from this book is how to integrate Git with Bash
 
 1. Enable Git command tab completion
 2. Add Git status info the the prompt
-3. set aliases to chain multiple commands
+3. Set aliases to streamline commands
 
 ## Get source code
 
@@ -100,5 +100,21 @@ mlr@pop-os:~/Desktop/rckwzrd.github.io (gh-pages *)$
 ```
 
 ## Set Aliases
+
+Finally, aliases can be set with `git config` to shorten or combine commands. 
+
+The status command can be shorted with:
+
+```bash
+git config --global alias.st status
+```
+
+A log command that displays the last 10 commit messages can be created with:
+
+```bash
+git config --global alias.ol log '--pretty=oneline -10'
+```
+
+
 
 
