@@ -55,15 +55,64 @@
 
 <p>With sets on display and large boxes of bricks counting by hand was not an option. Enter the <a href="https://rebrickable.com/downloads/">Rebrickable Lego Database</a>. This database contains data on every set, brick, and minifig released by Lego ever. The best part is that the database is accessible via an <a href="https://rebrickable.com/api/v3/docs/?key=">API</a>. So with a bit of Python we can responsibly interact with the API and count the number of bricks in the collection.</p>
 
-<p>Below is a simple workflow for requesting set data with <code class="language-plaintext highlighter-rouge">requests</code> and counting bricks with <code class="language-plaintext highlighter-rouge">pandas</code>:</p>
+<p>Below is a simple workflow for requesting set data and counting bricks:</p>
 
 <ol>
   <li>Acquire a Rebrickable API token</li>
-  <li>Load a list of set numbers from <code class="language-plaintext highlighter-rouge">csv</code></li>
-  <li>Set up and run a Rebrickable <code class="language-plaintext highlighter-rouge">GET</code> request</li>
-  <li>Convert request responses into a <code class="language-plaintext highlighter-rouge">dataframe</code></li>
+  <li>Set up a Rebrickable <code class="language-plaintext highlighter-rouge">GET</code> request</li>
+  <li>Request data for a list of sets</li>
+  <li>Convert responses into a <code class="language-plaintext highlighter-rouge">dataframe</code></li>
   <li>Count bricks and save results</li>
 </ol>
+
+<h2 id="acquire-api-token">Acquire API token</h2>
+
+<p>Rebrickable requires a unique token to access the Lego database API.</p>
+
+<p>A token can can be aquired by:</p>
+
+<ol>
+  <li>Make a Rebrickable account <a href="https://rebrickable.com/register">here</a> and login</li>
+  <li>Navigate to your account settings and select API</li>
+  <li>Copy your 32 character key to an <code class="language-plaintext highlighter-rouge">.env</code> file</li>
+  <li>Place the <code class="language-plaintext highlighter-rouge">.env</code> file in the same location the request will be ran</li>
+</ol>
+
+<p>The <code class="language-plaintext highlighter-rouge">.env</code> should have the following format:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>KEY=&lt;copy 32 character key here&gt;
+</code></pre></div></div>
+
+<p>API keys are sensitive information and should be obscured. Using an <code class="language-plaintext highlighter-rouge">.env</code> file will keep the key out of source code and secure access to the Rebrickable API.</p>
+
+<p>Now the key can be accessed in a Python script as an environment variable using the <code class="language-plaintext highlighter-rouge">os</code> and <code class="language-plaintext highlighter-rouge">dotenv</code> modules:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego_api.py
+</span>
+<span class="c1"># bring in modules
+</span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="c1"># load api key
+</span><span class="n">load_dotenv</span><span class="p">()</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">"KEY"</span><span class="p">)</span>
+
+<span class="c1"># set headers
+</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">"Accept"</span><span class="p">:</span> <span class="s">"application/json"</span><span class="p">,</span>
+        <span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"key "</span> <span class="o">+</span> <span class="n">KEY</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Once the key is loaded and assigned to <code class="language-plaintext highlighter-rouge">KEY</code> it can be used to construct a request header required to to authenticate with the API. Documentation on <code class="language-plaintext highlighter-rouge">dotenv</code> can be found at the <a href="https://pypi.org/project/python-dotenv/">package repository</a> and <code class="language-plaintext highlighter-rouge">os</code> can be referenced in the <a href="https://docs.python.org/3/library/os.html">standard library</a>.</p>
+
+<h2 id="set-up-get-request">Set up GET request</h2>
+
+<h2 id="request-set-data">Request set data</h2>
+
+<h2 id="convert-response-to-dataframe">Convert response to dataframe</h2>
+
+<h2 id="count-and-save">Count and save</h2>
 
 
   </div><a class="u-url" href="/2022/09/26/counting-lego-bricks.html" hidden></a>
