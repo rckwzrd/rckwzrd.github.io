@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-09-29T06:56:11-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Counting Lego Bricks</title><link href="http://localhost:4000/2022/09/26/counting-lego-bricks.html" rel="alternate" type="text/html" title="Counting Lego Bricks" /><published>2022-09-26T00:00:00-05:00</published><updated>2022-09-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/09/26/counting-lego-bricks</id><content type="html" xml:base="http://localhost:4000/2022/09/26/counting-lego-bricks.html"><![CDATA[<p>Lego is a big deal around the house and we maintain a running list of all sets acquired over the years. It is pretty easy to track the total number of sets in the collection (currently 62) by just counting up set numbers. From this knowledge a deeper a question was asked:</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-10-01T07:49:01-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Counting Lego Bricks</title><link href="http://localhost:4000/2022/09/26/counting-lego-bricks.html" rel="alternate" type="text/html" title="Counting Lego Bricks" /><published>2022-09-26T00:00:00-05:00</published><updated>2022-09-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/09/26/counting-lego-bricks</id><content type="html" xml:base="http://localhost:4000/2022/09/26/counting-lego-bricks.html"><![CDATA[<p>Lego is a big deal around the house and we maintain a running list of all sets acquired over the years. It is pretty easy to track the total number of sets in the collection (currently 62) by just counting up set numbers. From this knowledge a deeper a question was asked:</p>
 
 <blockquote>
   <p>We know how many Lego sets we have, but how many bricks are in the collection?</p>
@@ -12,21 +12,19 @@
   <li>Acquire a Rebrickable API token</li>
   <li>Set up a Rebrickable <code class="language-plaintext highlighter-rouge">GET</code> request</li>
   <li>Request data for a list of sets</li>
-  <li>Convert responses into a <code class="language-plaintext highlighter-rouge">dataframe</code></li>
-  <li>Count bricks and save results</li>
+  <li>Convert response into a <code class="language-plaintext highlighter-rouge">dataframe</code></li>
+  <li>Count bricks and report results</li>
 </ol>
 
 <h2 id="acquire-api-token">Acquire API token</h2>
 
-<p>Rebrickable requires a unique token to access the Lego database API.</p>
-
-<p>A token can can be aquired by:</p>
+<p>Rebrickable requires a unique token to access the Lego database API. A token can can be aquired by:</p>
 
 <ol>
   <li>Make a Rebrickable account <a href="https://rebrickable.com/register">here</a> and login</li>
   <li>Navigate to your account settings and select API</li>
   <li>Copy your 32 character key to an <code class="language-plaintext highlighter-rouge">.env</code> file</li>
-  <li>Place the <code class="language-plaintext highlighter-rouge">.env</code> file in the same location the request will be ran</li>
+  <li>Place the <code class="language-plaintext highlighter-rouge">.env</code> file in the same directory as <code class="language-plaintext highlighter-rouge">lego_api.py</code></li>
 </ol>
 
 <p>The <code class="language-plaintext highlighter-rouge">.env</code> should have the following format:</p>
@@ -39,8 +37,6 @@
 <p>Now the key can be accessed in a Python script as an environment variable using the <code class="language-plaintext highlighter-rouge">os</code> and <code class="language-plaintext highlighter-rouge">dotenv</code> modules:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego_api.py
-</span>
-<span class="c1"># bring in modules
 </span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
 
@@ -59,11 +55,131 @@
 
 <h2 id="set-up-get-request">Set up GET request</h2>
 
+<p>Now that the API key is set we can construct a <code class="language-plaintext highlighter-rouge">GET</code> request with the <code class="language-plaintext highlighter-rouge">requests </code> package to pull set data from Rebrickable. One of the quirks of the interface is that data can only be returned for one set at a time. So a unique <code class="language-plaintext highlighter-rouge">GET</code> request needs to be made for each set in the collection.</p>
+
+<p>A helper function is used to build the unique  request for a given set and return the data:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego-api.py
+</span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="c1"># helper to run request
+</span><span class="k">def</span> <span class="nf">get_sets</span><span class="p">(</span><span class="n">set_id</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://rebrickable.com/api/v3/lego/sets/</span><span class="si">{</span><span class="n">set_id</span><span class="si">}</span><span class="s">"</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">req</span><span class="p">.</span><span class="n">json</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The set id is passed as an arguement and then formatted into url string representing the body of the request. Next the request is executed with the url string and authorization header. The response is saved to a variable. Now the function sleeps for 1.1 seconds to avoid abusing the API. The data is extracted from the response as json and returned.</p>
+
+<p>In Python json is effectively treated as a dictionary. The returned set data has the following form:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="s">"set_num"</span><span class="p">:</span> <span class="s">"31062-1"</span><span class="p">,</span>
+  <span class="s">"name"</span><span class="p">:</span> <span class="s">"Robo Explorer"</span><span class="p">,</span>
+  <span class="s">"year"</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span>
+  <span class="s">"theme_id"</span><span class="p">:</span> <span class="mi">672</span><span class="p">,</span>
+  <span class="s">"num_parts"</span><span class="p">:</span> <span class="mi">205</span><span class="p">,</span>
+  <span class="s">"set_img_url"</span><span class="p">:</span> <span class="s">"https://cdn.rebrickable.com/media/sets/31062-1/9935.jpg"</span><span class="p">,</span>
+  <span class="s">"set_url"</span><span class="p">:</span> <span class="s">"https://rebrickable.com/sets/31062-1/robo-explorer/"</span><span class="p">,</span>
+  <span class="s">"last_modified_dt"</span><span class="p">:</span> <span class="s">"2018-11-29T23:47:51.919445Z"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>There are several bits of interesting information returned in the set data blob. The <code class="language-plaintext highlighter-rouge">num_parts</code> key wil be directly used to answer our question.</p>
+
 <h2 id="request-set-data">Request set data</h2>
 
-<h2 id="convert-response-to-dataframe">Convert response to dataframe</h2>
+<p>Now that the <code class="language-plaintext highlighter-rouge">get_sets()</code> helper function is in place requests can be efficiently executed for every set number in the collection.</p>
 
-<h2 id="count-and-save">Count and save</h2>]]></content><author><name></name></author><summary type="html"><![CDATA[Lego is a big deal around the house and we maintain a running list of all sets acquired over the years. It is pretty easy to track the total number of sets in the collection (currently 62) by just counting up set numbers. From this knowledge a deeper a question was asked:]]></summary></entry><entry><title type="html">Going Pro With Git</title><link href="http://localhost:4000/2022/08/29/going-pro-with-git.html" rel="alternate" type="text/html" title="Going Pro With Git" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/going-pro-with-git</id><content type="html" xml:base="http://localhost:4000/2022/08/29/going-pro-with-git.html"><![CDATA[<p>When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.</p>
+<p>With the help of <code class="language-plaintext highlighter-rouge">pandas</code> and a list comprehension set ids are loaded into a list and <code class="language-plaintext highlighter-rouge">get_sets()</code> is executed for every set in the collection:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego-api.py
+</span><span class="kn">import</span> <span class="nn">pandas</span>
+
+<span class="c1"># load set ids
+</span><span class="n">set_ids</span> <span class="o">=</span> <span class="n">pandas</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"./input_data/sets.csv"</span><span class="p">)[</span><span class="s">"set_num"</span><span class="p">].</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># request data for each set
+</span><span class="n">set_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_sets</span><span class="p">(</span><span class="n">set_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">set_id</span> <span class="ow">in</span> <span class="n">set_ids</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>The output assigned to <code class="language-plaintext highlighter-rouge">set_data</code> is a list of dictionaries. Every dictionary has the same keys and values unique to the set.</p>
+
+<h2 id="convert-to-dataframe-and-count-bricks">Convert to dataframe and count bricks</h2>
+
+<p>Now the accumulated <code class="language-plaintext highlighter-rouge">set_data</code> can be converted to a dataframe and the <code class="language-plaintext highlighter-rouge">num_parts</code> column can be summed to obtain a total brick count:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego-api.py
+# convert request data to df
+</span><span class="n">set_df</span> <span class="o">=</span> <span class="n">pandas</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">set_data</span><span class="p">)</span>
+
+<span class="c1"># count sets
+</span><span class="n">sets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">set_ids</span><span class="p">)</span>
+
+<span class="c1"># count bricks
+</span><span class="n">bricks</span> <span class="o">=</span> <span class="n">set_df</span><span class="p">[</span><span class="s">"num_parts"</span><span class="p">].</span><span class="nb">sum</span><span class="p">()</span>
+
+<span class="c1"># report
+</span><span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Total bricks in </span><span class="si">{</span><span class="n">sets</span><span class="si">}</span><span class="s"> set collection: </span><span class="si">{</span><span class="n">bricks</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The result is:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; Total bricks in 62 set collection: 23653 
+</code></pre></div></div>
+<p>That is a lot of bricks.</p>
+
+<p>The full script is given below. This is not the most rigourous approach, but it gets the job done. If this was production grade code the request response codes would be checked, errors would be handled, and there would be unit tests.</p>
+
+<p>The next question is what to do with the blob of data acquired from the Rebrickbable API. One option is dropping set data for the collection into a <code class="language-plaintext highlighter-rouge">SQLite</code> database. From that point it is possible to set up a pipeline to request set data and insert into the database for each new set added to the collection.</p>
+
+<p>That may be a post for another time.</p>
+
+<h2 id="full-script">Full script</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego-api.py
+</span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">pandas</span>
+
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="c1"># load api key
+</span><span class="n">load_dotenv</span><span class="p">()</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">"KEY"</span><span class="p">)</span>
+
+<span class="c1"># set headers
+</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">"Accept"</span><span class="p">:</span> <span class="s">"application/json"</span><span class="p">,</span>
+        <span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"key "</span> <span class="o">+</span> <span class="n">KEY</span>
+<span class="p">}</span>
+
+<span class="c1"># helper to run request
+</span><span class="k">def</span> <span class="nf">get_sets</span><span class="p">(</span><span class="n">set_id</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://rebrickable.com/api/v3/lego/sets/</span><span class="si">{</span><span class="n">set_id</span><span class="si">}</span><span class="s">"</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">req</span><span class="p">.</span><span class="n">json</span><span class="p">()</span>
+
+<span class="c1"># load set ids
+</span><span class="n">set_ids</span> <span class="o">=</span> <span class="n">pandas</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"./input_data/sets.csv"</span><span class="p">)[</span><span class="s">"set_num"</span><span class="p">].</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># request data for each set
+</span><span class="n">set_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_sets</span><span class="p">(</span><span class="n">set_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">set_id</span> <span class="ow">in</span> <span class="n">set_ids</span><span class="p">]</span>
+
+<span class="c1"># convert request data to df
+</span><span class="n">set_df</span> <span class="o">=</span> <span class="n">pandas</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">set_data</span><span class="p">)</span>
+
+<span class="c1"># count sets
+</span><span class="n">sets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">set_ids</span><span class="p">)</span>
+
+<span class="c1"># count bricks
+</span><span class="n">bricks</span> <span class="o">=</span> <span class="n">set_df</span><span class="p">[</span><span class="s">"num_parts"</span><span class="p">].</span><span class="nb">sum</span><span class="p">()</span>
+
+<span class="c1"># report
+</span><span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Total bricks in </span><span class="si">{</span><span class="n">sets</span><span class="si">}</span><span class="s"> set collection: </span><span class="si">{</span><span class="n">bricks</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+
+</code></pre></div></div>]]></content><author><name></name></author><summary type="html"><![CDATA[Lego is a big deal around the house and we maintain a running list of all sets acquired over the years. It is pretty easy to track the total number of sets in the collection (currently 62) by just counting up set numbers. From this knowledge a deeper a question was asked:]]></summary></entry><entry><title type="html">Going Pro With Git</title><link href="http://localhost:4000/2022/08/29/going-pro-with-git.html" rel="alternate" type="text/html" title="Going Pro With Git" /><published>2022-08-29T00:00:00-05:00</published><updated>2022-08-29T00:00:00-05:00</updated><id>http://localhost:4000/2022/08/29/going-pro-with-git</id><content type="html" xml:base="http://localhost:4000/2022/08/29/going-pro-with-git.html"><![CDATA[<p>When I first installed Git I did not really know what it was for besides interacting with Github. I learned the basics and got back to whatever project I was working on. Beyond cloning, committing, and pushing my Git skillset did not advance much over time.</p>
 
 <p>Recenty I fell into a challening development situation that prompted me to learn more about Git and version control workflows. I read through the excellent and free <a href="https://git-scm.com/book/en/v2">Pro Git</a> book. This text covers the full spectrum of Git, from the basics of branching through Git’s internal state.</p>
 
