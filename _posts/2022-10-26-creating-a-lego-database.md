@@ -2,7 +2,7 @@
 
 layout: post
 sqlite-python: https://docs.python.org/3/library/sqlite3.html
-sqilte: https://www.sqlite.org/index.html
+sqlite: https://www.sqlite.org/index.html
 sql-install:
 lego-post: https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html
 
@@ -10,13 +10,12 @@ lego-post: https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html
 
 Explain how python handles connections and transactions. Explain how SQL statements are passed as strings and exectuted. Explain why SQLite3 was chosen.
 
-Use Python to programmaticlly handle database operations and start building a reusable module for managing database actions.
 
-If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the [Counting Lego Bricks]({{page.lego-post}}) post with the end goal of piping lego data from the Rebrickable API into our local database.
+If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the [Counting Lego Bricks]({{page.lego-post}}) post with the end goal of pumping lego data from the Rebrickable API into our local database.
 
 [SQLite3]({{page.sqlite}}) is a fast and lightweight SQL database engine that lives on a hard drive. It does not have the overhead of traditional client-server database engines making it easy to use for small projects. We will interact with SQLite3 using the [Python API]({{page.sqlite-python}}) included in the standard library. The efficiency of SQLite3 combined with the utility of Python provides a good solution for creating and maintaining a lego database.
 
-Before we can start piping lego data into the database we need to initialize a SQLite3 data store, create methods to operate on the database, and define the structure of tables that hold data. These operations are effectively SQL statements held in strings and passed to the SQLite3 engine via the Python API. These actions can be codified in reusable module for managing database operations and expanded as the pipeline grows: 
+Before we can start pumping lego data into the database we need to initialize a SQLite3 data store, create methods to operate on the database, and define the structure of tables that hold data. These operations are effectively SQL statements held in strings and passed to the SQLite3 engine via the Python API. The following actions for provisioning a database can be recorded in a Python module and reused as the pipeline grows:
 
 1. create connection
 2. create sets table
@@ -25,7 +24,7 @@ Before we can start piping lego data into the database we need to initialize a S
 
 ## Installing SQLite3
 
-Installing SQLite3 on a linux machine is fortunately a simple task. 
+Before we can provision the lego databse we need to install SQLite on a personal linux machine. Fortunately installing SQLite3 is a simple task. 
 
 First check if SQLite3 is installed by running `which` in a terminal:
 
@@ -34,20 +33,38 @@ $ which sqlite3
 /usr/bin/sqlite3
 ```
 
-If the output returns a path to the SQLite3 executable proceed. If not run the following `apt install` command:
+If the output returns a path to the SQLite3 binary proceed. If not run the following `apt install` command:
 
 ```bash
 $ sudo apt install sqlite3
 ```
 
-Now confirm that SQLite3 is installed with by checking the `version`:
+Confirm that SQLite3 is installed with by checking the `version`:
 
 ```bash
 $ sqlite3 --version
 3.37.2 2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5dalt1
 ```
 
+Now we can begin building our SQLite3 Python module!
+
 ## Creating a connection
+
+One of the greatest advantages of SQLite3 is that the entire database is contained in one file. To initialize a database pass a file name with the `.db` extension to `sqlite3.connect()`. If the database with the passed name is not is not found a new database will be implictly generated. Calling `sqlite3.connect()` returns a connection that is used to run other actions against the database.
+
+Becuase we want to be able to initialize a database and connect on demand the operation is wrapped in the `connect_db` function. This function takes a database string as an arguement, returns a database connection, and fails gracefully if something goes awry:
+
+```python
+import sqlite3
+
+def connect_db(db_file):
+    try:
+        conn = sqlite3.connect(db_file)
+        print("Connection Created")
+    except sqlite3.Error as e:
+        raise e
+    return conn
+```
 
 ## Creating Sets Table
 
