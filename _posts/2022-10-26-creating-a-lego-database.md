@@ -3,13 +3,9 @@
 layout: post
 sqlite-python: https://docs.python.org/3/library/sqlite3.html
 sqlite: https://www.sqlite.org/index.html
-sql-install:
 lego-post: https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html
 
 ---
-
-Explain how python handles connections and transactions. Explain how SQL statements are passed as strings and exectuted. Explain why SQLite3 was chosen.
-
 
 If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the [Counting Lego Bricks]({{page.lego-post}}) post with the end goal of pumping lego data from the Rebrickable API into our local database.
 
@@ -50,7 +46,7 @@ Now we can begin building our SQLite3 Python module!
 
 ## Creating a connection
 
-One of the greatest advantages of SQLite3 is that the entire database is contained in one file. To initialize a database pass a file name with the `.db` extension to `sqlite3.connect()`. If the database with the passed name is not is not found a new database will be implictly generated. Calling `sqlite3.connect()` returns a connection that is used to run other actions against the database.
+One of the greatest advantages of SQLite3 is that the entire database is contained in one file. To initialize a database pass a file name with the `.db` extension to `sqlite3.connect()`. If the database with the passed name is not is not found a new database will be implictly generated. Calling `sqlite3.connect()` returns a connection object that is used to run other actions against the database.
 
 Becuase we want to be able to initialize a database and connect on demand the operation is wrapped in the `connect_db` function. This function takes a database string as an arguement, returns a database connection, and fails gracefully if something goes awry:
 
@@ -66,13 +62,23 @@ def connect_db(db_file):
     return conn
 ```
 
+## Creating Themes table
+
+Pass connection object and SQL statement to a function.
+
+Explain SQL statement. Table name, if exists, field name, and constraints.
+
 ## Creating Sets Table
 
-## Creating Themes table
+Using `theme_id` as a foreign key to link `themes` and `sets` tables.
 
 ## Closing the connection
 
+Close database connection to commit the transactions and protect integrity of the database.
+
 ## Full Script
+
+Call each function in sequence inside of a main function. 
 
 ```python
 import sqlite3
