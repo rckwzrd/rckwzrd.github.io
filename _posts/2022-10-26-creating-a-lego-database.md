@@ -64,20 +64,41 @@ def connect_db(db_file):
 
 ## Define Themes Table
 
-Now we need to define the structure of the lego themes table using the following SQL `CREATE TABLE` syntax:
+Now we need to define the structure of the lego themes table using the following SQL `CREATE TABLE` statement:
 
-```SQL
-CREATE TABLE IF NOT EXISTS themes (
-    theme_id INT PRIMARY KEY,
-    theme_name TEXT NOT NULL
-);
+```python
+create_themes_sql = """
+    CREATE TABLE IF NOT EXISTS themes (
+        theme_id INT PRIMARY KEY,
+        theme_name TEXT NOT NULL
+    );
+    """
 ```
 
+This statment checks first if the `themes` table exists, creates one if it doesn't, and then declares the constraints for two fields. The `theme_id` is an integer field and primary key representing the relational link to other tables in the database. The `theme_name` is a text field that will only accept non null entries.
+
 ## Define Sets Table
+
+Following the same pattern we will define the structure of the lego sets table using the following `CREATE TABLE` statement:
+
+```python
+create_sets_sql = """
+    CREATE TABLE IF NOT EXISTS sets (
+        set_num TEXT PRIMARY KEY,
+        set_name TEXT NOT NULL,
+        set_year INT NOT NULL,
+        theme_id INT NOT NULL,
+        num_parts INT NOT NULL,
+        FOREIGN KEY (theme_id) REFERENCES themes (theme_id)
+    );
+        """
+```
 
 Using `theme_id` as a foreign key to link `themes` and `sets` tables.
 
 ## Creating the Tables
+
+Note that both of the above SQL statements are wrapped in strings and assigned to the variables `create_theme_sql` and `create_sets_sql`.
 
 Pass connection object and SQL statement to a function.
 
