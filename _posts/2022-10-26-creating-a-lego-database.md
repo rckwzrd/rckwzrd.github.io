@@ -14,9 +14,10 @@ If you spend time around lego sets you will notice that there is a structure bet
 Before we can start pumping lego data into the database we need to initialize a SQLite3 data store, create methods to operate on the database, and define the structure of tables that hold data. These operations are effectively SQL statements held in strings and passed to the SQLite3 engine via the Python API. The following actions for provisioning a database can be recorded in a Python module and reused as the pipeline grows:
 
 1. create connection
-2. create sets table
-3. create themes table
-4. close connection
+2. define sets table
+3. define themes table
+4. create tables
+5. close connection
 
 ## Installing SQLite3
 
