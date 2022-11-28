@@ -70,17 +70,17 @@ Now we need to define the structure of the lego themes table using the following
 ```python
 create_themes_sql = """
     CREATE TABLE IF NOT EXISTS themes (
-        theme_id INT PRIMARY KEY,
+        theme_id TEXT PRIMARY KEY,
         theme_name TEXT NOT NULL
     );
     """
 ```
 
-This statment checks first if the `themes` table exists, creates one if it doesn't, and then declares the constraints for two fields. The `theme_id` is an integer field and primary key representing the relational link to other tables in the database. The `theme_name` is a text field that will only accept non null entries.
+This statment checks first if the `themes` table exists, creates one if it doesn't, and then declares the constraints for two fields. The `theme_id` is an text field and primary key representing the relational link to other tables in the database. The `theme_name` is a text field that will only accept non null entries. In practical terms the `theme_id` identifies each unique lego theme and the `theme_name` gives the full descriptive name.
 
 ## Define Sets Table
 
-Following the same pattern we will define the structure of the lego sets table using the following `CREATE TABLE` statement:
+Now we will use a slightly more complicated `CREATE TABLE` statement to define the structure of the lego sets table:
 
 ```python
 create_sets_sql = """
@@ -95,7 +95,8 @@ create_sets_sql = """
         """
 ```
 
-Using `theme_id` as a foreign key to link `themes` and `sets` tables.
+Following the same pattern as above, this statement checks if the `sets` table exists, creates if required, and then declares the constraints for five fields. The `set_num` is a text field and primary key for the table. The `set_name` is a non null text field. The `set_year`, `theme_id`, and `num_parts` are all non null integer fields. The `FOREIGN KEY` statement links the `theme_id` in the `sets` table to primary `theme_id` key in the `themes` table. Again in practical terms the `set_num` identifies each lego set, the `set_name` gives the official set name, the `set_year` list the year the set was introduced, the `num_parts` gives the number of bricks in the set. The `theme_id` gives the identifier for the theme the set belongs to and can be used to reference theme data held in the `themes` table.
+
 
 ## Creating the Tables
 
