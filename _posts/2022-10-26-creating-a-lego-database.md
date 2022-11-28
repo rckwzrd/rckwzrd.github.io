@@ -62,15 +62,24 @@ def connect_db(db_file):
     return conn
 ```
 
-## Creating Themes table
+## Define Themes Table
 
-Pass connection object and SQL statement to a function.
+Now we need to define the structure of the lego themes table using the following SQL `CREATE TABLE` syntax:
 
-Explain SQL statement. Table name, if exists, field name, and constraints.
+```SQL
+CREATE TABLE IF NOT EXISTS themes (
+    theme_id INT PRIMARY KEY,
+    theme_name TEXT NOT NULL
+);
+```
 
-## Creating Sets Table
+## Define Sets Table
 
 Using `theme_id` as a foreign key to link `themes` and `sets` tables.
+
+## Creating the Tables
+
+Pass connection object and SQL statement to a function.
 
 ## Closing the connection
 
