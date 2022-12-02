@@ -129,9 +129,21 @@ def close_db(conn):
 
 ## Full Script
 
-Call each function in sequence inside of a main function. 
+The database initialization and table creation should be performed in the following sequence:
+
+1. create connection
+2. define sets table
+3. define themes table
+4. create tables
+5. close connection
+
+Because we chose to wrap the operations in functions the provisioning sequence can be organized in a `main()` function at the end of the script. The `main()` function can in turn be fired by running `python -m lego-db.py` in a terminal. If all goes as planned print statements detailing each step will print in quick succession. The full script is included below, with the `main()` function and corresponding `__name__` check.
+
+At this point we have provisioned the lego database and are ready to continue building the lego data pipeline.
 
 ```python
+# lego-db.py
+
 import sqlite3
 
 
