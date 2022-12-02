@@ -116,7 +116,16 @@ This function accepts a database connection and a `CREATE TABLE` string as argue
 
 ## Closing the connection
 
-Close database connection to commit the transactions and protect integrity of the database.
+After intitializing the database by opening a connection and then creating tables we need to close the connection. Closing the database connection will explicitly commit the table creation transactions and protect the integrity of the database. It is always a good practice to close a SQLite3 database connection with the `close()` method. In our case the connection closure is wrapped in the `close_db()` function and includes a bit of error handling:
+
+```python
+def close_db(conn):
+    try:
+        conn.close()
+        print("Connection Closed")
+    except sqlite3.Error as e:
+        raise e
+```
 
 ## Full Script
 
