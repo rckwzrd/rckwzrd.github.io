@@ -49,7 +49,7 @@ Now we can begin building our SQLite3 Python module!
 
 One of the greatest advantages of SQLite3 is that the entire database is contained in one file. To initialize a database pass a file name with the `.db` extension to `sqlite3.connect()`. If the database with the passed name is not is not found a new database will be implictly generated. Calling `sqlite3.connect()` returns a connection object that is used to run other actions against the database.
 
-Becuase we want to be able to initialize a database and connect on demand the operation is wrapped in the `connect_db` function. This function takes a database string as an arguement, returns a database connection, and fails gracefully if something goes awry:
+Becuase we want to be able to initialize a database and connect on demand the operation is wrapped in the `connect_db()` function. This function takes a database string as an arguement, returns a database connection, and fails gracefully if something goes awry:
 
 ```python
 import sqlite3
@@ -100,9 +100,19 @@ Following the same pattern as above, this statement checks if the `sets` table e
 
 ## Creating the Tables
 
-Note that both of the above SQL statements are wrapped in strings and assigned to the variables `create_theme_sql` and `create_sets_sql`.
+Note that both of the above SQL statements are wrapped in triple quotes and assigned to the variables `create_theme_sql` and `create_sets_sql`. While they contain valid SQL statements, these variables are simply python strings. In order to create the tables the statements need to be passed to the database, evaluated by the SQLite3 engine, and executed. We will use the `create_table()` function to carry out this tranasction for both the themes and sets tables:
 
-Pass connection object and SQL statement to a function.
+```python
+def create_table(conn, table_sql):
+    try:
+        c = conn.cursor()
+        c.execute(table_sql)
+        print("Table Created")
+    except sqlite3.Error as e:
+        raise e
+```
+
+This function accepts a database connection and a `CREATE TABLE` string as arguements. The `cursor()` method is called on the connection to generate a cursor object. The cursor is the primary tool for executing SQL statements against a database and capturing the returned response if applicable. The `CREATE TABLE` statement is now passed to the cursor's `execute()` method to be evaluated and the table is initialzed. This operation is wrapped in a `try/except` block to responsibly handle errors.
 
 ## Closing the connection
 
