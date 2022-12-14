@@ -1,4 +1,192 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-10-01T07:49:01-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Counting Lego Bricks</title><link href="http://localhost:4000/2022/09/26/counting-lego-bricks.html" rel="alternate" type="text/html" title="Counting Lego Bricks" /><published>2022-09-26T00:00:00-05:00</published><updated>2022-09-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/09/26/counting-lego-bricks</id><content type="html" xml:base="http://localhost:4000/2022/09/26/counting-lego-bricks.html"><![CDATA[<p>Lego is a big deal around the house and we maintain a running list of all sets acquired over the years. It is pretty easy to track the total number of sets in the collection (currently 62) by just counting up set numbers. From this knowledge a deeper a question was asked:</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-12-14T15:04:54-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">The Lego Themes Table</title><link href="http://localhost:4000/2022/11/14/the-lego-themes-table.html" rel="alternate" type="text/html" title="The Lego Themes Table" /><published>2022-11-14T00:00:00-06:00</published><updated>2022-11-14T00:00:00-06:00</updated><id>http://localhost:4000/2022/11/14/the-lego-themes-table</id><content type="html" xml:base="http://localhost:4000/2022/11/14/the-lego-themes-table.html"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Creating A Lego Database</title><link href="http://localhost:4000/2022/10/26/creating-a-lego-database.html" rel="alternate" type="text/html" title="Creating A Lego Database" /><published>2022-10-26T00:00:00-05:00</published><updated>2022-10-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/10/26/creating-a-lego-database</id><content type="html" xml:base="http://localhost:4000/2022/10/26/creating-a-lego-database.html"><![CDATA[<p>If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> post with the end goal of pumping lego data from the Rebrickable API into our local database.</p>
+
+<p><a href="https://www.sqlite.org/index.html">SQLite3</a> is a fast and lightweight SQL database engine that lives on a hard drive. It does not have the overhead of traditional client-server database engines making it easy to use for small projects. We will interact with SQLite3 using the <a href="https://docs.python.org/3/library/sqlite3.html">Python API</a> included in the standard library. The efficiency of SQLite3 combined with the utility of Python provides a good solution for creating and maintaining a lego database.</p>
+
+<p>Before we can start pumping lego data into the database we need to initialize a SQLite3 data store, create methods to operate on the database, and define the structure of tables that hold data. These operations are effectively SQL statements held in strings and passed to the SQLite3 engine via the Python API. The following actions for provisioning a database can be recorded in a Python module and reused as the pipeline grows:</p>
+
+<ol>
+  <li>create connection</li>
+  <li>define sets table</li>
+  <li>define themes table</li>
+  <li>create tables</li>
+  <li>close connection</li>
+</ol>
+
+<h2 id="installing-sqlite3">Installing SQLite3</h2>
+
+<p>Before we can provision the lego databse we need to install SQLite on a personal linux machine. Fortunately installing SQLite3 is a simple task.</p>
+
+<p>First check if SQLite3 is installed by running <code class="language-plaintext highlighter-rouge">which</code> in a terminal:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>which sqlite3
+/usr/bin/sqlite3
+</code></pre></div></div>
+
+<p>If the output returns a path to the SQLite3 binary proceed. If not run the following <code class="language-plaintext highlighter-rouge">apt install</code> command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>sqlite3
+</code></pre></div></div>
+
+<p>Confirm that SQLite3 is installed with by checking the <code class="language-plaintext highlighter-rouge">version</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sqlite3 <span class="nt">--version</span>
+3.37.2 2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5dalt1
+</code></pre></div></div>
+
+<p>Now we can begin building our SQLite3 Python module!</p>
+
+<h2 id="creating-a-connection">Creating a connection</h2>
+
+<p>One of the greatest advantages of SQLite3 is that the entire database is contained in one file. To initialize a database pass a file name with the <code class="language-plaintext highlighter-rouge">.db</code> extension to <code class="language-plaintext highlighter-rouge">sqlite3.connect()</code>. If the database with the passed name is not is not found a new database will be implictly generated. Calling <code class="language-plaintext highlighter-rouge">sqlite3.connect()</code> returns a connection object that is used to run other actions against the database.</p>
+
+<p>Becuase we want to be able to initialize a database and connect on demand the operation is wrapped in the <code class="language-plaintext highlighter-rouge">connect_db()</code> function. This function takes a database string as an arguement, returns a database connection, and fails gracefully if something goes awry:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<span class="k">def</span> <span class="nf">connect_db</span><span class="p">(</span><span class="n">db_file</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_file</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Connection Created"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">return</span> <span class="n">conn</span>
+</code></pre></div></div>
+
+<h2 id="define-themes-table">Define Themes Table</h2>
+
+<p>Now we need to define the structure of the lego themes table using the following SQL <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> statement:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">create_themes_sql</span> <span class="o">=</span> <span class="s">"""
+    CREATE TABLE IF NOT EXISTS themes (
+        theme_id TEXT PRIMARY KEY,
+        theme_name TEXT NOT NULL
+    );
+    """</span>
+</code></pre></div></div>
+
+<p>This statment checks first if the <code class="language-plaintext highlighter-rouge">themes</code> table exists, creates one if it doesn’t, and then declares the constraints for two fields. The <code class="language-plaintext highlighter-rouge">theme_id</code> is an text field and primary key representing the relational link to other tables in the database. The <code class="language-plaintext highlighter-rouge">theme_name</code> is a text field that will only accept non null entries. In practical terms the <code class="language-plaintext highlighter-rouge">theme_id</code> identifies each unique lego theme and the <code class="language-plaintext highlighter-rouge">theme_name</code> gives the full descriptive name.</p>
+
+<h2 id="define-sets-table">Define Sets Table</h2>
+
+<p>Now we will use a slightly more complicated <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> statement to define the structure of the lego sets table:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">create_sets_sql</span> <span class="o">=</span> <span class="s">"""
+    CREATE TABLE IF NOT EXISTS sets (
+        set_num TEXT PRIMARY KEY,
+        set_name TEXT NOT NULL,
+        set_year INT NOT NULL,
+        theme_id INT NOT NULL,
+        num_parts INT NOT NULL,
+        FOREIGN KEY (theme_id) REFERENCES themes (theme_id)
+    );
+        """</span>
+</code></pre></div></div>
+
+<p>Following the same pattern as above, this statement checks if the <code class="language-plaintext highlighter-rouge">sets</code> table exists, creates if required, and then declares the constraints for five fields. The <code class="language-plaintext highlighter-rouge">set_num</code> is a text field and primary key for the table. The <code class="language-plaintext highlighter-rouge">set_name</code> is a non null text field. The <code class="language-plaintext highlighter-rouge">set_year</code>, <code class="language-plaintext highlighter-rouge">theme_id</code>, and <code class="language-plaintext highlighter-rouge">num_parts</code> are all non null integer fields. The <code class="language-plaintext highlighter-rouge">FOREIGN KEY</code> statement links the <code class="language-plaintext highlighter-rouge">theme_id</code> in the <code class="language-plaintext highlighter-rouge">sets</code> table to primary <code class="language-plaintext highlighter-rouge">theme_id</code> key in the <code class="language-plaintext highlighter-rouge">themes</code> table. Again in practical terms the <code class="language-plaintext highlighter-rouge">set_num</code> identifies each lego set, the <code class="language-plaintext highlighter-rouge">set_name</code> gives the official set name, the <code class="language-plaintext highlighter-rouge">set_year</code> list the year the set was introduced, the <code class="language-plaintext highlighter-rouge">num_parts</code> gives the number of bricks in the set. The <code class="language-plaintext highlighter-rouge">theme_id</code> gives the identifier for the theme the set belongs to and can be used to reference theme data held in the <code class="language-plaintext highlighter-rouge">themes</code> table.</p>
+
+<h2 id="creating-the-tables">Creating the Tables</h2>
+
+<p>Note that both of the above SQL statements are wrapped in triple quotes and assigned to the variables <code class="language-plaintext highlighter-rouge">create_theme_sql</code> and <code class="language-plaintext highlighter-rouge">create_sets_sql</code>. While they contain valid SQL statements, these variables are simply python strings. In order to create the tables the statements need to be passed to the database, evaluated by the SQLite3 engine, and executed. We will use the <code class="language-plaintext highlighter-rouge">create_table()</code> function to carry out this tranasction for both the themes and sets tables:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">table_sql</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table_sql</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Table Created"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+</code></pre></div></div>
+
+<p>This function accepts a database connection and a <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> string as arguements. The <code class="language-plaintext highlighter-rouge">cursor()</code> method is called on the connection to generate a cursor object. The cursor is the primary tool for executing SQL statements against a database and capturing the returned response if applicable. The <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> statement is now passed to the cursor’s <code class="language-plaintext highlighter-rouge">execute()</code> method to be evaluated and the table is initialzed. This operation is wrapped in a <code class="language-plaintext highlighter-rouge">try/except</code> block to responsibly handle errors.</p>
+
+<h2 id="closing-the-connection">Closing the connection</h2>
+
+<p>After intitializing the database by opening a connection and then creating tables we need to close the connection. Closing the database connection will explicitly commit the table creation transactions and protect the integrity of the database. It is always a good practice to close a SQLite3 database connection with the <code class="language-plaintext highlighter-rouge">close()</code> method. In our case the connection closure is wrapped in the <code class="language-plaintext highlighter-rouge">close_db()</code> function and includes a bit of error handling:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">close_db</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Connection Closed"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+</code></pre></div></div>
+
+<h2 id="full-script">Full Script</h2>
+
+<p>The database initialization and table creation should be performed in the following sequence:</p>
+
+<ol>
+  <li>create connection</li>
+  <li>define sets table</li>
+  <li>define themes table</li>
+  <li>create tables</li>
+  <li>close connection</li>
+</ol>
+
+<p>Because we chose to wrap the operations in functions the provisioning sequence can be organized in a <code class="language-plaintext highlighter-rouge">main()</code> function at the end of the script. The <code class="language-plaintext highlighter-rouge">main()</code> function can in turn be fired by running <code class="language-plaintext highlighter-rouge">python -m lego-db.py</code> in a terminal. If all goes as planned print statements detailing each step will print in quick succession. The full script is included below, with the <code class="language-plaintext highlighter-rouge">main()</code> function and corresponding <code class="language-plaintext highlighter-rouge">__name__</code> check.</p>
+
+<p>At this point we have provisioned the lego database and are ready to continue building the lego data pipeline.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego-db.py
+</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+
+<span class="k">def</span> <span class="nf">connect_db</span><span class="p">(</span><span class="n">db_file</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_file</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Connection Created"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">return</span> <span class="n">conn</span>
+
+
+<span class="k">def</span> <span class="nf">close_db</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Connection Closed"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+
+<span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">table_sql</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table_sql</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Table Created"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">db_file</span> <span class="o">=</span> <span class="s">"lego.db"</span>
+
+    <span class="n">create_themes_sql</span> <span class="o">=</span> <span class="s">"""
+        CREATE TABLE IF NOT EXISTS themes (
+            theme_id INT PRIMARY KEY,
+            theme_name TEXT NOT NULL
+        );
+        """</span>
+    <span class="n">create_sets_sql</span> <span class="o">=</span> <span class="s">"""
+        CREATE TABLE IF NOT EXISTS sets (
+            set_num TEXT PRIMARY KEY,
+            set_name TEXT NOT NULL,
+            set_year INT NOT NULL,
+            theme_id INT NOT NULL,
+            num_parts INT NOT NULL,
+            FOREIGN KEY (theme_id) REFERENCES themes (theme_id)
+        );
+        """</span>
+
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">(</span><span class="n">db_file</span><span class="p">)</span>
+    <span class="n">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">create_themes_sql</span><span class="p">)</span>
+    <span class="n">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">create_sets_sql</span><span class="p">)</span>
+    <span class="n">close_db</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div></div>]]></content><author><name></name></author><summary type="html"><![CDATA[If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the Counting Lego Bricks post with the end goal of pumping lego data from the Rebrickable API into our local database.]]></summary></entry><entry><title type="html">Counting Lego Bricks</title><link href="http://localhost:4000/2022/09/26/counting-lego-bricks.html" rel="alternate" type="text/html" title="Counting Lego Bricks" /><published>2022-09-26T00:00:00-05:00</published><updated>2022-09-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/09/26/counting-lego-bricks</id><content type="html" xml:base="http://localhost:4000/2022/09/26/counting-lego-bricks.html"><![CDATA[<p>Lego is a big deal around the house and we maintain a running list of all sets acquired over the years. It is pretty easy to track the total number of sets in the collection (currently 62) by just counting up set numbers. From this knowledge a deeper a question was asked:</p>
 
 <blockquote>
   <p>We know how many Lego sets we have, but how many bricks are in the collection?</p>
