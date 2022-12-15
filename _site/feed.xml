@@ -1,4 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-12-14T15:04:54-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">The Lego Themes Table</title><link href="http://localhost:4000/2022/11/14/the-lego-themes-table.html" rel="alternate" type="text/html" title="The Lego Themes Table" /><published>2022-11-14T00:00:00-06:00</published><updated>2022-11-14T00:00:00-06:00</updated><id>http://localhost:4000/2022/11/14/the-lego-themes-table</id><content type="html" xml:base="http://localhost:4000/2022/11/14/the-lego-themes-table.html"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Creating A Lego Database</title><link href="http://localhost:4000/2022/10/26/creating-a-lego-database.html" rel="alternate" type="text/html" title="Creating A Lego Database" /><published>2022-10-26T00:00:00-05:00</published><updated>2022-10-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/10/26/creating-a-lego-database</id><content type="html" xml:base="http://localhost:4000/2022/10/26/creating-a-lego-database.html"><![CDATA[<p>If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> post with the end goal of pumping lego data from the Rebrickable API into our local database.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-12-15T15:19:48-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">The Lego Themes Table</title><link href="http://localhost:4000/2022/11/14/the-lego-themes-table.html" rel="alternate" type="text/html" title="The Lego Themes Table" /><published>2022-11-14T00:00:00-06:00</published><updated>2022-11-14T00:00:00-06:00</updated><id>http://localhost:4000/2022/11/14/the-lego-themes-table</id><content type="html" xml:base="http://localhost:4000/2022/11/14/the-lego-themes-table.html"><![CDATA[<p>Intro paragraph. Bulk load. Use functions defined in lego-api.py and lego-db.py as a starting point. Review themes table schema.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sqlite3 lego.db 
+SQLite version 3.37.2 2022-01-06 13:25:41
+sqlite&gt;
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlite&gt; .schema
+CREATE TABLE themes <span class="o">(</span>
+            theme_id INT PRIMARY KEY,
+            theme_name TEXT NOT NULL
+        <span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>List of steps:</p>
+
+<ol>
+  <li>Define a bulk load python function and SQL statement</li>
+  <li>Request theme data and format for insertion</li>
+  <li>Wrap the procedure in a python function and execute</li>
+  <li>Verify the themes table was successfully hydrated</li>
+</ol>
+
+<h2 id="function-and-statement">Function and Statement</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1">#NOTE: context manager
+</span>        <span class="k">with</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="p">.</span><span class="n">executemany</span><span class="p">(</span><span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"Table Hydrated"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">load_sql</span> <span class="o">=</span> <span class="s">"""
+    INSERT INTO themes VALUES(?, ?)
+"""</span>
+</code></pre></div></div>
+
+<h2 id="request-and-format">Request and Format</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_themes</span><span class="p">():</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://rebrickable.com/api/v3/lego/themes/?page=1&amp;page_size=1000"</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">req</span><span class="p">.</span><span class="n">json</span><span class="p">()[</span><span class="s">"results"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">themes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">[</span><span class="s">"id"</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s">"name"</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_themes</span><span class="p">()]</span>
+</code></pre></div></div>
+
+<h2 id="wrap-and-execute">Wrap and Execute</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+
+<h2 id="verify-data">Verify Data</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>]]></content><author><name></name></author><summary type="html"><![CDATA[Intro paragraph. Bulk load. Use functions defined in lego-api.py and lego-db.py as a starting point. Review themes table schema.]]></summary></entry><entry><title type="html">Creating A Lego Database</title><link href="http://localhost:4000/2022/10/26/creating-a-lego-database.html" rel="alternate" type="text/html" title="Creating A Lego Database" /><published>2022-10-26T00:00:00-05:00</published><updated>2022-10-26T00:00:00-05:00</updated><id>http://localhost:4000/2022/10/26/creating-a-lego-database</id><content type="html" xml:base="http://localhost:4000/2022/10/26/creating-a-lego-database.html"><![CDATA[<p>If you spend time around lego sets you will notice that there is a structure between sets, bricks, and themes that is an obvious fit for a relational database system. In this post we will provision a SQLite3 database with Python to hold set and theme information. This will expand on the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> post with the end goal of pumping lego data from the Rebrickable API into our local database.</p>
 
 <p><a href="https://www.sqlite.org/index.html">SQLite3</a> is a fast and lightweight SQL database engine that lives on a hard drive. It does not have the overhead of traditional client-server database engines making it easy to use for small projects. We will interact with SQLite3 using the <a href="https://docs.python.org/3/library/sqlite3.html">Python API</a> included in the standard library. The efficiency of SQLite3 combined with the utility of Python provides a good solution for creating and maintaining a lego database.</p>
 
