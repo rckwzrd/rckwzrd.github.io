@@ -24,7 +24,7 @@ CREATE TABLE themes (
 
 The themes table has been provisioned to accept a `theme_id` integer as a primary key and a `theme_name` as a non-null text object. These are the two pieces of data that will be collected from the Rebrickable API and dropped into this table for permanent retention.
 
-Following the procedure below only a minimal amount of new code is required to set up the bulk load:
+The procedure below only requires a minimal amount of new code to execute and verify the bulk load:
 
 1. Define a bulk load python function and SQL statement
 2. Request theme data and format for insertion
