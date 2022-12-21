@@ -7,8 +7,8 @@
 <meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="The Lego Themes Table" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the Counting Lego Bricks and Creating a Lego Database posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is actually a straightforward operation." />
-<meta property="og:description" content="In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the Counting Lego Bricks and Creating a Lego Database posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is actually a straightforward operation." />
+<meta name="description" content="In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the Counting Lego Bricks and Creating a Lego Database posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation." />
+<meta property="og:description" content="In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the Counting Lego Bricks and Creating a Lego Database posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation." />
 <link rel="canonical" href="http://localhost:4000/2022/11/14/the-lego-themes-table.html" />
 <meta property="og:url" content="http://localhost:4000/2022/11/14/the-lego-themes-table.html" />
 <meta property="og:site_name" content="Rckwzrd’s Reference" />
@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="The Lego Themes Table" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-14T00:00:00-06:00","datePublished":"2022-11-14T00:00:00-06:00","description":"In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the Counting Lego Bricks and Creating a Lego Database posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is actually a straightforward operation.","headline":"The Lego Themes Table","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/11/14/the-lego-themes-table.html"},"url":"http://localhost:4000/2022/11/14/the-lego-themes-table.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-14T00:00:00-06:00","datePublished":"2022-11-14T00:00:00-06:00","description":"In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the Counting Lego Bricks and Creating a Lego Database posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.","headline":"The Lego Themes Table","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/11/14/the-lego-themes-table.html"},"url":"http://localhost:4000/2022/11/14/the-lego-themes-table.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Rckwzrd&apos;s Reference" /></head>
 <body><header class="site-header" role="banner">
@@ -47,7 +47,7 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p>In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> and <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">Creating a Lego Database</a> posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is actually a straightforward operation.</p>
+    <p>In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> and <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">Creating a Lego Database</a> posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.</p>
 
 <p>For context lets quickly review the schema for themes table in the lego database:</p>
 
@@ -63,7 +63,7 @@ CREATE TABLE themes <span class="o">(</span>
 
 <p>The themes table has been provisioned to accept a <code class="language-plaintext highlighter-rouge">theme_id</code> integer as a primary key and a <code class="language-plaintext highlighter-rouge">theme_name</code> as a non-null text object. These are the two pieces of data that will be collected from the Rebrickable API and dropped into this table for permanent retention.</p>
 
-<p>The procedure below only requires a minimal amount of new code to execute and verify the bulk load:</p>
+<p>The procedure below requires minimal new code to execute the bulk load:</p>
 
 <ol>
   <li>Define a bulk load python function and SQL statement</li>
@@ -74,20 +74,29 @@ CREATE TABLE themes <span class="o">(</span>
 
 <h2 id="function-and-statement">Function and Statement</h2>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<p>The bulk load function follows patterns established for interacting with the lego database in <code class="language-plaintext highlighter-rouge">lego_db.py</code>. The only additional components are the <code class="language-plaintext highlighter-rouge">with conn</code> context manager and the <code class="language-plaintext highlighter-rouge">conn.executemany()</code> method:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego_db.py
+</span><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c1">#NOTE: context manager
-</span>        <span class="k">with</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="p">.</span><span class="n">executemany</span><span class="p">(</span><span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
             <span class="k">print</span><span class="p">(</span><span class="s">"Table Hydrated"</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">e</span>
 </code></pre></div></div>
 
+<p>The <code class="language-plaintext highlighter-rouge">conn.executemany()</code> method accepts a SQL insert statement string and a blob of data as arguements. This method can be used to load blobs of data in one call making it a good fit for the bulk load use case. One caveat is that the data passed needs to be a list of tuples. This requirement will be handled after the themes data is requested.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">with conn</code> context manager wraps the <code class="language-plaintext highlighter-rouge">conn.executemany()</code> call and commits the insert transactions taking place. If any sort of exception is thrown the context manager will roll back the transactions and protect the database. More information on the context manager can be found in the <a href="https://docs.python.org/3/library/sqlite3.html#sqlite3-connection-context-manager">context manager documentation</a></p>
+
+<p>The SQL statement used to execute the bulk load is deceptively simple:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">load_sql</span> <span class="o">=</span> <span class="s">"""
     INSERT INTO themes VALUES(?, ?)
 """</span>
 </code></pre></div></div>
+<p>Loading data into a the themes table is triggered by the <code class="language-plaintext highlighter-rouge">INSERT INTO themes</code> statement. The key piece is the <code class="language-plaintext highlighter-rouge">VALUES</code> statement. The <code class="language-plaintext highlighter-rouge">?, ?</code> expression is SQL placeholder syntax that will insert a tuple of <code class="language-plaintext highlighter-rouge">theme_id</code> and <code class="language-plaintext highlighter-rouge">theme_name</code> into the themes table. The placeholder syntax is an important tool for loading data and enforcing security. Additional details can be found in the <a href="https://docs.python.org/3/library/sqlite3.html#sqlite3-placeholders">placeholder documentation</a>.</p>
 
 <h2 id="request-and-format">Request and Format</h2>
 
