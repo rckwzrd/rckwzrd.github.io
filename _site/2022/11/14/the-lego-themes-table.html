@@ -139,14 +139,14 @@ CREATE TABLE themes <span class="o">(</span>
     <span class="n">load_theme_table</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>This wrapper function requests the full blob of theme records, converts the data, connects to the lego database, loads the records with a SQL statement, and closes the connection. Using the <code class="language-plaintext highlighter-rouge">if __name__ == "__main__"</code> idiom the wrapper can be executed as a script from the command line:</p>
+<p>This wrapper function requests the full blob of theme records, converts the data, connects to the lego database, loads the records with a SQL statement, and closes the connection. Using the <code class="language-plaintext highlighter-rouge">if __name__</code> idiom the wrapper can be executed as a script from the command line:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 src/lego_db.py
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3 src/lego_db.py
 </code></pre></div></div>
 
 <h2 id="verify-data">Verify Data</h2>
 
-<p>After executing the bulk load  we can quickly verify that records hit the themes table using the SQLite3 terminal interface:</p>
+<p>After executing the bulk load we can quickly verify that records filled up the themes table using the SQLite3 terminal interface:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sqlite3 lego.db 
 SQLite version 3.37.2 2022-01-06 13:25:41
@@ -166,7 +166,7 @@ sqlite&gt; <span class="k">select</span> <span class="k">*</span> from themes li
 17|Speed Slammers
 </code></pre></div></div>
 
-<p>The data is place and the pipeline is succussful. Now that the themes table is in place it is time to start thinking about individual set records, but this a task for another time. Hopefully this demonstrates how code grows over time and hints at the ways that SQL, Python, and APIs can be used to build persistent datastores.</p>
+<p>The data is place and the pipeline is succussful! Now that the themes table is hydrated we can start thinking about individual set records, but this a task for another time. Hopefully this demonstrates how code grows over time and hints at the ways that SQL, Python, and APIs can be used to build persistent datastores.</p>
 
 <h2 id="full-script">Full Script</h2>
 

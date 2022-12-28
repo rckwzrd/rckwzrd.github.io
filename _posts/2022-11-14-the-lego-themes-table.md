@@ -103,15 +103,15 @@ if __name__ == "__main__":
     load_theme_table()
 ```
 
-This wrapper function requests the full blob of theme records, converts the data, connects to the lego database, loads the records with a SQL statement, and closes the connection. Using the `if __name__ == "__main__"` idiom the wrapper can be executed as a script from the command line:
+This wrapper function requests the full blob of theme records, converts the data, connects to the lego database, loads the records with a SQL statement, and closes the connection. Using the `if __name__` idiom the wrapper can be executed as a script from the command line:
 
 ```bash
-python3 src/lego_db.py
+$ python3 src/lego_db.py
 ```
 
 ## Verify Data
 
-After executing the bulk load  we can quickly verify that records hit the themes table using the SQLite3 terminal interface: 
+After executing the bulk load we can quickly verify that records filled up the themes table using the SQLite3 terminal interface: 
 
 ```bash
 $ sqlite3 lego.db 
@@ -133,7 +133,7 @@ sqlite> select * from themes limit 5;
 17|Speed Slammers
 ```
 
-The data is place and the pipeline is succussful. Now that the themes table is in place it is time to start thinking about individual set records, but this a task for another time. Hopefully this demonstrates how code grows over time and hints at the ways that SQL, Python, and APIs can be used to build persistent datastores.
+The data is place and the pipeline is succussful! Now that the themes table is hydrated we can start thinking about individual set records, but this a task for another time. Hopefully this demonstrates how code grows over time and hints at the ways that SQL, Python, and APIs can be used to build persistent datastores.
 
 ## Full Script
 
