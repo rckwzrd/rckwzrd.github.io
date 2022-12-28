@@ -3,7 +3,7 @@ layout: post
 lego-post: https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html
 api-post: https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html
 cm-doc: https://docs.python.org/3/library/sqlite3.html#sqlite3-connection-context-manager
-fmt-dc: https://docs.python.org/3/library/sqlite3.html#sqlite3-placeholders
+fmt-doc: https://docs.python.org/3/library/sqlite3.html#sqlite3-placeholders
 
 ---
 
@@ -33,7 +33,7 @@ The procedure below requires minimal new code to execute the bulk load:
 
 ## Function and Statement
 
-The bulk load function follows patterns established for interacting with the lego database in `lego_db.py`. The only additional components are the `with conn` context manager and the `conn.executemany()` method: 
+The bulk load function follows patterns established for interacting with the lego database in `lego_db.py` from the [lego database post]({{page.lego-post}}). The only additional components are the `with conn` context manager and the `conn.executemany()` method: 
 
 ```python
 # lego_db.py
@@ -57,9 +57,11 @@ load_sql = """
     INSERT INTO themes VALUES(?, ?)
 """
 ```
-Loading data into a the themes table is triggered by the `INSERT INTO themes` statement. The key piece is the `VALUES` statement. The `?, ?` expression is SQL placeholder syntax that will insert a tuple of `theme_id` and `theme_name` into the themes table. The placeholder syntax is an important tool for loading data and enforcing security. Additional details can be found in the [placeholder documentation]({{page.fmt-dc}}).
+Loading data into a the themes table is triggered by the `INSERT INTO themes` statement. The key piece is the `VALUES` statement. The `?, ?` expression is SQL placeholder syntax that will insert a tuple of `theme_id` and `theme_name` into the themes table. The placeholder syntax is an important tool for loading data and enforcing security. Additional details can be found in the [placeholder documentation]({{page.fmt-doc}}).
 
 ## Request and Format
+
+Now that there is a method for loading the themes table we can switch gears and work on requesting the 498 unique lego theme records. Fortunately we already dervied an approach for aqcuiring the data in the [counting lego bricks ]({{page.api-post}}) post. Assuming the directory structure is correct, we can simply import the `get_themes()` function from the `lego_api.py` module and call it in the pipeline:
 
 ```python
 def get_themes():
@@ -69,9 +71,12 @@ def get_themes():
     return req.json()["results"]
 ```
 
+The single caveat is that the `load_table()` function is expecting a list of tuples. The blob of theme records returned from `get_themes()` can be reshaped into the required data structure with the following list comprehension:
+
 ```python
 themes = [(i["id"], i["name"]) for i in get_themes()]
 ```
+It is critical to note how fast this section came together when pre-existing code was leveraged to request bulk theme data. Writing generalizable functions takes skill, but it pays dividends in situations like this.
 
 ## Wrap and Execute
 
