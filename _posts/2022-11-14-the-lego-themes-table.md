@@ -7,7 +7,7 @@ fmt-doc: https://docs.python.org/3/library/sqlite3.html#sqlite3-placeholders
 
 ---
 
-In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the [Counting Lego Bricks]({{page.api-post}}) and [Creating a Lego Database]({{page.lego-post}}) posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.
+In this post we will bulk load 458 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the [Counting Lego Bricks]({{page.api-post}}) and [Creating a Lego Database]({{page.lego-post}}) posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.
 
 For context lets quickly review the schema for themes table in the lego database:
 
@@ -61,9 +61,10 @@ Loading data into a the themes table is triggered by the `INSERT INTO themes` st
 
 ## Request and Format
 
-Now that there is a method for loading the themes table we can switch gears and work on requesting the 498 unique lego theme records. Fortunately we already dervied an approach for aqcuiring the data in the [counting lego bricks ]({{page.api-post}}) post. Assuming the directory structure is correct, we can simply import the `get_themes()` function from the `lego_api.py` module and call it in the pipeline:
+Now that there is a method for loading the themes table we can switch gears and work on requesting the 458 unique lego theme records. Fortunately we dervied an approach for aqcuiring the data in the [counting lego bricks ]({{page.api-post}}) post. Assuming the directory structure is correct, we can simply import the `get_themes()` function from the `lego_api.py` module and call it in the pipeline:
 
 ```python
+# lego_api.py
 def get_themes():
     url = "https://rebrickable.com/api/v3/lego/themes/?page=1&page_size=1000"
     req = requests.get(url=url, headers=headers)
@@ -80,10 +81,91 @@ It is critical to note how fast this section came together when pre-existing cod
 
 ## Wrap and Execute
 
+At this point all of the machinery needed to bulk load the themes table is in place. We just need to orchestrate the operation. To do this we will wrap each step in a function called `load_themes_table()` and then call it directly:
+
 ```python
+# lego_db.py
+def load_theme_table():
+
+    themes = [(i["id"], i["name"]) for i in get_themes()]
+
+    load_sql = """
+        INSERT INTO themes VALUES(?, ?)
+    """
+
+    db_file = "lego.db"
+    conn = connect_db(db_file)
+    load_table(conn, load_sql, themes)
+    close_db(conn)
+    print("Themes table hydrated")
+
+if __name__ == "__main__":
+    load_theme_table()
+```
+
+This wrapper function requests the full blob of theme records, converts the data, connects to the lego database, loads the records with a SQL statement, and closes the connection. Using the `if __name__ == "__main__"` idiom the wrapper can be executed as a script from the command line:
+
+```bash
+python3 src/lego_db.py
 ```
 
 ## Verify Data
 
+After executing the bulk load  we can quickly verify that records hit the themes table using the SQLite3 terminal interface: 
+
 ```bash
+$ sqlite3 lego.db 
+SQLite version 3.37.2 2022-01-06 13:25:41
+...
+sqlite> select count(*) from themes;
+459
+```
+
+```bash
+$ sqlite lego.db
+SQLite version 3.37.2 2022-01-06 13:25:41
+...
+sqlite> select * from themes limit 5;
+1|Technic
+3|Competition
+4|Expert Builder
+16|RoboRiders
+17|Speed Slammers
+```
+
+The data is place and the pipeline is succussful. Now that the themes table is in place it is time to start thinking about individual set records, but this a task for another time. Hopefully this demonstrates how code grows over time and hints at the ways that SQL, Python, and APIs can be used to build persistent datastores.
+
+## Full Script
+
+```python
+import sqlite3
+from lego_api import get_themes
+
+### other functions from lego_db.py
+### ... 
+### ...
+
+def load_table(conn, load_sql, data):
+    try:
+        #NOTE: context manager
+        with conn:
+            conn.executemany(load_sql, data)
+            print("Table Hydrated")
+    except sqlite3.Error as e:
+        raise e
+
+def load_theme_table():
+    themes = [(i["id"], i["name"]) for i in get_themes()]
+
+    load_sql = """
+        INSERT INTO themes VALUES(?, ?)
+    """
+
+    db_file = "lego.db"
+    conn = connect_db(db_file)
+    load_table(conn, load_sql, themes)
+    close_db(conn)
+
+if __name__ == "__main__":
+    load_theme_table()
 ```
