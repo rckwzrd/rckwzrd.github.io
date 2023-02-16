@@ -7,8 +7,8 @@
 <meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="Python Linting Tools" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="working on setting up a python language server in nvim. one of the first things i do is disable all of the inline and automatic linting and code checking. this is just my preference, but all of the flags and warnings really through me off when i am cranking out some code." />
-<meta property="og:description" content="working on setting up a python language server in nvim. one of the first things i do is disable all of the inline and automatic linting and code checking. this is just my preference, but all of the flags and warnings really through me off when i am cranking out some code." />
+<meta name="description" content="linting definition" />
+<meta property="og:description" content="linting definition" />
 <link rel="canonical" href="http://localhost:4000/2022/12/15/python-linting-tools.html" />
 <meta property="og:url" content="http://localhost:4000/2022/12/15/python-linting-tools.html" />
 <meta property="og:site_name" content="Rckwzrd’s Reference" />
@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Python Linting Tools" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-12-15T00:00:00-06:00","datePublished":"2022-12-15T00:00:00-06:00","description":"working on setting up a python language server in nvim. one of the first things i do is disable all of the inline and automatic linting and code checking. this is just my preference, but all of the flags and warnings really through me off when i am cranking out some code.","headline":"Python Linting Tools","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/12/15/python-linting-tools.html"},"url":"http://localhost:4000/2022/12/15/python-linting-tools.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-12-15T00:00:00-06:00","datePublished":"2022-12-15T00:00:00-06:00","description":"linting definition","headline":"Python Linting Tools","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/12/15/python-linting-tools.html"},"url":"http://localhost:4000/2022/12/15/python-linting-tools.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Rckwzrd&apos;s Reference" /></head>
 <body><header class="site-header" role="banner">
@@ -47,13 +47,17 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p>working on setting up a python language server in nvim. one of the first things i do is disable all of the inline and automatic linting and code checking. this is just my preference, but all of the flags and warnings really through me off when i am cranking out some code.</p>
+    <p><a href="https://stackoverflow.com/a/8503586">linting definition</a></p>
 
-<p>I am using the open source pylsp language server and i had to spend bit of time disabling all of the loud linters and format checkers. all i want is autocompletion, goto definitions, and hover documentation.</p>
+<p>Linting is the process of analyzing code for errors and style conventions. Linting can occur when editing, saving, and running code.</p>
 
-<p>Now pylsp is very modular, but I was shocked at the number of ways there are to lint, check, and format code in Python. I spent more time figuring what each tool was and how it related to other linters. below are some notes on these tools, there purpose, and relationship to others. finally, i will give a quick snippet of my init.lua showing the pylsp configuraiton i use to stiffle real time linting and style checking.</p>
+<p>In the python programming language the standards for code style are contained in pep8 and implemented by an ecosystem of linting tools.</p>
 
-<p><a href="https://stackoverflow.com/a/8503586">linting definition</a></p>
+<p>Each tool has its own opinionated interpretion of the standards and serves a unique purpose. Understanding what each tool does and how it relates to other linters can be challenging.</p>
+
+<p>The purpose of this post is to provide a short reference list on some of the main python linters. Providing a set of pointers should help disentangle conflicts between each linting tool.</p>
+
+<p>purpose, type, language, link to package, and relation to other linters</p>
 
   </div><a class="u-url" href="/2022/12/15/python-linting-tools.html" hidden></a>
 </article>
