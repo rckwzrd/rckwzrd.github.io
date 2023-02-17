@@ -11,33 +11,33 @@ pylint: https://pypi.org/project/pylint/
 yapf: https://pypi.org/project/yapf/
 black: https://pypi.org/project/black/
 autopep8: https://pypi.org/project/autopep8/ 
+pep8: https://peps.python.org/pep-0008/
 
 ---
 
-[Linting]({{page.lint-def}})is the process of analyzing code for syntax, structure, and style with the goal of ensuring code quality. Linting is a form of [static code analysis]({{static-def}}) that occurs prior to code exuction at the program level. In practice linting can occur while code is being editing, saved, or evaluated in a development workflow.
+[Linting]({{page.lint-def}}) is the process of analyzing code for syntax, structure, and style errors. Linting is a form of [static code analysis]({{static-def}}) that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality. 
 
+In Python linting standards are documented in the [PEP8 style guide]({{pep8}}) and implemented by an ecosystem of linting tools. Each tool has an opinionated interpretation of the standards and serves a specific role in the linting process. Understanding what each tool does and its relationship to other tools can be challenging.
 
-
-
-
-
-In the python programming language the standards for code style are contained in pep8 and implemented by an ecosystem of linting tools. 
-
-Each tool has its own opinionated interpretion of the standards and serves a unique purpose. Understanding what each tool does and how it relates to other linters can be challenging. 
-
-The purpose of this post is to provide a short reference list on some of the main python linters. Providing a set of pointers should help disentangle conflicts between each linting tool. 
-
-purpose, type, language, link to package, and relation to other linters
+The purpose of this post is to provide a short reference for a set of common Python linters. These pointers will highlight intended usage, frame dependancies, and give a link to project documentation.
 
 ## Linting Tools
 
 [autopep8]({{autopep8}})
+
 [black]({{black}})
+
 [flake8]({{flake8}})
+
 [mccabe]({{mccabe}})
+
 [pycodestyle]({{pycodestyle}})
+
 [pydocstyle]({{pydocstyle}})
+
 [pyflakes]({{pyflakes}})
+
 [pylint]({{pylint}})
+
 [yapf]({{yapf}})
 
