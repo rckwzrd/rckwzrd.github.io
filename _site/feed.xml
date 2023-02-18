@@ -1,28 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-02-17T14:34:27-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Python Linting Tools</title><link href="http://localhost:4000/2022/12/15/python-linting-tools.html" rel="alternate" type="text/html" title="Python Linting Tools" /><published>2022-12-15T00:00:00-06:00</published><updated>2022-12-15T00:00:00-06:00</updated><id>http://localhost:4000/2022/12/15/python-linting-tools</id><content type="html" xml:base="http://localhost:4000/2022/12/15/python-linting-tools.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Lint_(software)">Linting</a> is the process of analyzing code for syntax, structure, and style errors. Linting is a form of <a href="">static code analysis</a> that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-02-18T08:07:48-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Python Linting Tools</title><link href="http://localhost:4000/2022/12/15/python-linting-tools.html" rel="alternate" type="text/html" title="Python Linting Tools" /><published>2022-12-15T00:00:00-06:00</published><updated>2022-12-15T00:00:00-06:00</updated><id>http://localhost:4000/2022/12/15/python-linting-tools</id><content type="html" xml:base="http://localhost:4000/2022/12/15/python-linting-tools.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Lint_(software)">Linting</a> is the process of analyzing code for syntax, structure, and style errors. Linting is a form of <a href="https://en.wikipedia.org/wiki/Static_program_analysis">static code analysis</a> that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality. Linters can be ran in a terminal and often integrate with text editors and IDEs.</p>
 
 <p>In Python linting standards are documented in the <a href="">PEP8 style guide</a> and implemented by an ecosystem of linting tools. Each tool has an opinionated interpretation of the standards and serves a specific role in the linting process. Understanding what each tool does and its relationship to other tools can be challenging.</p>
 
-<p>The purpose of this post is to provide a short reference for a set of common Python linters. These pointers will highlight intended usage, frame dependancies, and give a link to project documentation.</p>
+<p>The purpose of this post is to provide a short reference for a set of common Python linters. These pointers will highlight intended usage, frame dependancies, and give a link to project documentation. Many of these tools appear to do the same things.</p>
 
 <h2 id="linting-tools">Linting Tools</h2>
 
-<p><a href="">autopep8</a></p>
+<p><a href="https://pypi.org/project/autopep8/">autopep8</a></p>
 
-<p><a href="">black</a></p>
+<ul>
+  <li>linter and automatic Python code formatter</li>
+  <li>direct implementation of PEP8</li>
+  <li>built on top <code class="language-plaintext highlighter-rouge">pycodestyle</code></li>
+  <li>runs from command line</li>
+  <li>integrates with text editor</li>
+</ul>
 
-<p><a href="">flake8</a></p>
+<p><a href="https://pypi.org/project/black/">black</a></p>
 
-<p><a href="">mccabe</a></p>
+<ul>
+  <li>linter and automatic Python code formatter</li>
+  <li>strict implementation of PEP8</li>
+  <li>limited configuration options by design</li>
+  <li>runs from command line</li>
+  <li>integrates with text editor</li>
+</ul>
 
-<p><a href="">pycodestyle</a></p>
+<p><a href="https://pypi.org/project/flake8/">flake8</a></p>
 
-<p><a href="">pydocstyle</a></p>
+<ul>
+  <li>pure linting tool with static error codes</li>
+  <li>direct impelmentation of PEP8</li>
+  <li>integrates <code class="language-plaintext highlighter-rouge">pyflakes</code>, <code class="language-plaintext highlighter-rouge">pycodestyle</code>, and <code class="language-plaintext highlighter-rouge">mccabe</code></li>
+  <li>runs from command line</li>
+  <li>integrates with text editor</li>
+</ul>
 
-<p><a href="">pyflakes</a></p>
+<p><a href="https://pypi.org/project/mccabe/">mccabe</a></p>
 
-<p><a href="">pylint</a></p>
+<ul>
+  <li>module that serves as a plugin for other linters</li>
+  <li>computes and returns a graph of <a href="https://en.wikipedia.org/wiki/Cyclomatic_complexity">code complexity</a></li>
+  <li>returned a graph represents paths in code</li>
+  <li>paths are used by linters to evaluate code</li>
+  <li>runs from command line</li>
+</ul>
 
-<p><a href="">yapf</a></p>]]></content><author><name></name></author><summary type="html"><![CDATA[Linting is the process of analyzing code for syntax, structure, and style errors. Linting is a form of static code analysis that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality.]]></summary></entry><entry><title type="html">The Lego Themes Table</title><link href="http://localhost:4000/2022/11/14/the-lego-themes-table.html" rel="alternate" type="text/html" title="The Lego Themes Table" /><published>2022-11-14T00:00:00-06:00</published><updated>2022-11-14T00:00:00-06:00</updated><id>http://localhost:4000/2022/11/14/the-lego-themes-table</id><content type="html" xml:base="http://localhost:4000/2022/11/14/the-lego-themes-table.html"><![CDATA[<p>In this post we will bulk load 458 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> and <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">Creating a Lego Database</a> posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.</p>
+<p><a href="https://pypi.org/project/pycodestyle/">pycodestyle</a></p>
+
+<ul>
+  <li>pure linting tool with static error codes</li>
+  <li>direct implementation of PEP8</li>
+  <li>one of the original Python linters</li>
+  <li>often used by other linters</li>
+  <li>runs from command line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pydocstyle/">pydocstyle</a></p>
+
+<ul>
+  <li>pure linting tool with a focus on docstrings</li>
+  <li>direct implementation of <a href="https://peps.python.org/pep-0257/">PEP257</a></li>
+  <li>PEP257 provides guidance on doc string formatting</li>
+  <li>often paired with <code class="language-plaintext highlighter-rouge">pycodestyle</code></li>
+  <li>runs from commman line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pyflakes/">pyflakes</a></p>
+
+<ul>
+  <li>simple linting tool that focuses on static errors</li>
+  <li>limited implementation of PEP8</li>
+  <li>does not check style convention, only errors</li>
+  <li>often used by other linters</li>
+  <li>runs from command line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pylint/">pylint</a></p>
+
+<ul>
+  <li>complex linting tool with many features</li>
+  <li>direct implementation of PEP8 with configuration options</li>
+  <li>provides static errors, style errors, and refactoring suggestions</li>
+  <li>can be extended with plugins for specific frameworks</li>
+  <li>runs from command line and integrates with text editor</li>
+</ul>
+
+<p><a href="https://pypi.org/project/yapf/">yapf</a></p>
+
+<ul>
+  <li>automatic Python formatter</li>
+  <li>configurable implementation of PEP8</li>
+  <li>intended to format code to project defined style</li>
+  <li>newer project that is still in alpha</li>
+  <li>runs from command line</li>
+</ul>]]></content><author><name></name></author><summary type="html"><![CDATA[Linting is the process of analyzing code for syntax, structure, and style errors. Linting is a form of static code analysis that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality. Linters can be ran in a terminal and often integrate with text editors and IDEs.]]></summary></entry><entry><title type="html">The Lego Themes Table</title><link href="http://localhost:4000/2022/11/14/the-lego-themes-table.html" rel="alternate" type="text/html" title="The Lego Themes Table" /><published>2022-11-14T00:00:00-06:00</published><updated>2022-11-14T00:00:00-06:00</updated><id>http://localhost:4000/2022/11/14/the-lego-themes-table</id><content type="html" xml:base="http://localhost:4000/2022/11/14/the-lego-themes-table.html"><![CDATA[<p>In this post we will bulk load 458 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> and <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">Creating a Lego Database</a> posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.</p>
 
 <p>For context lets quickly review the schema for themes table in the lego database:</p>
 
