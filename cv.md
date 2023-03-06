@@ -5,9 +5,13 @@ title: CV
 
 ### Summary
 
+Multifunctional geoscientist with experience in federal IT leadership, software development, and data science.
+
 ### Work Experience
 
-#### Physical Scientist, USGS
+#### Supervisory IT Specialist, United States Geological Survey
+
+#### Physical Scientist, United States Geological Survey
 
 #### Data Scientist, Geolumina
 
