@@ -1,4 +1,4 @@
-<p>In this post we will bulk load 498 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> and <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">Creating a Lego Database</a> posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.</p>
+<p>In this post we will bulk load 458 unique lego themes from the Rebrickable API into a local lego database. This task leverages the API and database operations established in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">Counting Lego Bricks</a> and <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">Creating a Lego Database</a> posts. Because we already wrote functions for requesting data and interacting with the database hydrating the themes table is a straightforward operation.</p>
 
 <p>For context lets quickly review the schema for themes table in the lego database:</p>
 
@@ -25,7 +25,7 @@ CREATE TABLE themes <span class="o">(</span>
 
 <h2 id="function-and-statement">Function and Statement</h2>
 
-<p>The bulk load function follows patterns established for interacting with the lego database in <code class="language-plaintext highlighter-rouge">lego_db.py</code>. The only additional components are the <code class="language-plaintext highlighter-rouge">with conn</code> context manager and the <code class="language-plaintext highlighter-rouge">conn.executemany()</code> method:</p>
+<p>The bulk load function follows patterns established for interacting with the lego database in <code class="language-plaintext highlighter-rouge">lego_db.py</code> from the <a href="https://rckwzrd.github.io/2022/10/26/creating-a-lego-database.html">lego database post</a>. The only additional components are the <code class="language-plaintext highlighter-rouge">with conn</code> context manager and the <code class="language-plaintext highlighter-rouge">conn.executemany()</code> method:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego_db.py
 </span><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
@@ -51,20 +51,104 @@ CREATE TABLE themes <span class="o">(</span>
 
 <h2 id="request-and-format">Request and Format</h2>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_themes</span><span class="p">():</span>
+<p>Now that there is a method for loading the themes table we can switch gears and work on requesting the 458 unique lego theme records. Fortunately we dervied an approach for aqcuiring the data in the <a href="https://rckwzrd.github.io/2022/09/26/counting-lego-bricks.html">counting lego bricks </a> post. Assuming the directory structure is correct, we can simply import the <code class="language-plaintext highlighter-rouge">get_themes()</code> function from the <code class="language-plaintext highlighter-rouge">lego_api.py</code> module and call it in the pipeline:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego_api.py
+</span><span class="k">def</span> <span class="nf">get_themes</span><span class="p">():</span>
     <span class="n">url</span> <span class="o">=</span> <span class="s">"https://rebrickable.com/api/v3/lego/themes/?page=1&amp;page_size=1000"</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
     <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">req</span><span class="p">.</span><span class="n">json</span><span class="p">()[</span><span class="s">"results"</span><span class="p">]</span>
 </code></pre></div></div>
 
+<p>The single caveat is that the <code class="language-plaintext highlighter-rouge">load_table()</code> function is expecting a list of tuples. The blob of theme records returned from <code class="language-plaintext highlighter-rouge">get_themes()</code> can be reshaped into the required data structure with the following list comprehension:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">themes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">[</span><span class="s">"id"</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s">"name"</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_themes</span><span class="p">()]</span>
 </code></pre></div></div>
+<p>It is critical to note how fast this section came together when pre-existing code was leveraged to request bulk theme data. Writing generalizable functions takes skill, but it pays dividends in situations like this.</p>
 
 <h2 id="wrap-and-execute">Wrap and Execute</h2>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<p>At this point all of the machinery needed to bulk load the themes table is in place. We just need to orchestrate the operation. To do this we will wrap each step in a function called <code class="language-plaintext highlighter-rouge">load_themes_table()</code> and then call it directly:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lego_db.py
+</span><span class="k">def</span> <span class="nf">load_theme_table</span><span class="p">():</span>
+
+    <span class="n">themes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">[</span><span class="s">"id"</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s">"name"</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_themes</span><span class="p">()]</span>
+
+    <span class="n">load_sql</span> <span class="o">=</span> <span class="s">"""
+        INSERT INTO themes VALUES(?, ?)
+    """</span>
+
+    <span class="n">db_file</span> <span class="o">=</span> <span class="s">"lego.db"</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">(</span><span class="n">db_file</span><span class="p">)</span>
+    <span class="n">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">themes</span><span class="p">)</span>
+    <span class="n">close_db</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Themes table hydrated"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">load_theme_table</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>This wrapper function requests the full blob of theme records, converts the data, connects to the lego database, loads the records with a SQL statement, and closes the connection. Using the <code class="language-plaintext highlighter-rouge">if __name__</code> idiom the wrapper can be executed as a script from the command line:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3 src/lego_db.py
+</code></pre></div></div>
 
 <h2 id="verify-data">Verify Data</h2>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<p>After executing the bulk load we can quickly verify that records filled up the themes table using the SQLite3 terminal interface:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sqlite3 lego.db 
+SQLite version 3.37.2 2022-01-06 13:25:41
+...
+sqlite&gt; <span class="k">select </span>count<span class="o">(</span><span class="k">*</span><span class="o">)</span> from themes<span class="p">;</span>
+459
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sqlite lego.db
+SQLite version 3.37.2 2022-01-06 13:25:41
+...
+sqlite&gt; <span class="k">select</span> <span class="k">*</span> from themes limit 5<span class="p">;</span>
+1|Technic
+3|Competition
+4|Expert Builder
+16|RoboRiders
+17|Speed Slammers
+</code></pre></div></div>
+
+<p>The data is place and the pipeline is succussful! Now that the themes table is hydrated we can start thinking about individual set records, but this a task for another time. Hopefully this demonstrates how code grows over time and hints at the ways that SQL, Python, and APIs can be used to build persistent datastores.</p>
+
+<h2 id="full-script">Full Script</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">from</span> <span class="nn">lego_api</span> <span class="kn">import</span> <span class="n">get_themes</span>
+
+<span class="c1">### other functions from lego_db.py
+### ... 
+### ...
+</span>
+<span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1">#NOTE: context manager
+</span>        <span class="k">with</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="p">.</span><span class="n">executemany</span><span class="p">(</span><span class="n">load_sql</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"Table Hydrated"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+<span class="k">def</span> <span class="nf">load_theme_table</span><span class="p">():</span>
+    <span class="n">themes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">[</span><span class="s">"id"</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s">"name"</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_themes</span><span class="p">()]</span>
+
+    <span class="n">load_sql</span> <span class="o">=</span> <span class="s">"""
+        INSERT INTO themes VALUES(?, ?)
+    """</span>
+
+    <span class="n">db_file</span> <span class="o">=</span> <span class="s">"lego.db"</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">(</span><span class="n">db_file</span><span class="p">)</span>
+    <span class="n">load_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">load_sql</span><span class="p">,</span> <span class="n">themes</span><span class="p">)</span>
+    <span class="n">close_db</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">load_theme_table</span><span class="p">()</span>
+</code></pre></div></div>

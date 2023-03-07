@@ -1,0 +1,98 @@
+<p><a href="https://en.wikipedia.org/wiki/Lint_(software)">Linting</a> is the process of analyzing code for syntax, structure, and style errors. Linting is a form of <a href="https://en.wikipedia.org/wiki/Static_program_analysis">static code analysis</a> that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality. Linters can be ran in a terminal and often integrate with text editors and IDEs.</p>
+
+<p>In Python linting standards are documented in the <a href="">PEP8 style guide</a> and implemented by an ecosystem of linting tools. Each tool has an opinionated interpretation of the standards and serves a specific role in the linting process. Understanding what each tool does and its relationship to other tools can be challenging.</p>
+
+<p>The purpose of this post is to provide a short reference for a set of common Python linters. These pointers will highlight intended usage, frame dependancies, and give a link to project documentation. Many of these tools appear to do the same things.</p>
+
+<h2 id="linting-tools">Linting Tools</h2>
+
+<p><a href="https://pypi.org/project/autopep8/">autopep8</a></p>
+
+<ul>
+  <li>linter and automatic Python code formatter</li>
+  <li>direct implementation of PEP8</li>
+  <li>built on top <code class="language-plaintext highlighter-rouge">pycodestyle</code></li>
+  <li>runs from command line</li>
+  <li>integrates with text editor</li>
+</ul>
+
+<p><a href="https://pypi.org/project/black/">black</a></p>
+
+<ul>
+  <li>linter and automatic Python code formatter</li>
+  <li>strict implementation of PEP8</li>
+  <li>limited configuration options by design</li>
+  <li>runs from command line</li>
+  <li>integrates with text editor</li>
+</ul>
+
+<p><a href="https://pypi.org/project/flake8/">flake8</a></p>
+
+<ul>
+  <li>pure linting tool with static error codes</li>
+  <li>direct impelmentation of PEP8</li>
+  <li>integrates <code class="language-plaintext highlighter-rouge">pyflakes</code>, <code class="language-plaintext highlighter-rouge">pycodestyle</code>, and <code class="language-plaintext highlighter-rouge">mccabe</code></li>
+  <li>runs from command line</li>
+  <li>integrates with text editor</li>
+</ul>
+
+<p><a href="https://pypi.org/project/mccabe/">mccabe</a></p>
+
+<ul>
+  <li>module that serves as a plugin for other linters</li>
+  <li>computes and returns a graph of <a href="https://en.wikipedia.org/wiki/Cyclomatic_complexity">code complexity</a></li>
+  <li>returned a graph represents paths in code</li>
+  <li>paths are used by linters to evaluate code</li>
+  <li>runs from command line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pycodestyle/">pycodestyle</a></p>
+
+<ul>
+  <li>pure linting tool with static error codes</li>
+  <li>direct implementation of PEP8</li>
+  <li>one of the original Python linters</li>
+  <li>often used by other linters</li>
+  <li>runs from command line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pydocstyle/">pydocstyle</a></p>
+
+<ul>
+  <li>pure linting tool with a focus on docstrings</li>
+  <li>direct implementation of <a href="https://peps.python.org/pep-0257/">PEP257</a></li>
+  <li>PEP257 provides guidance on doc string formatting</li>
+  <li>often paired with <code class="language-plaintext highlighter-rouge">pycodestyle</code></li>
+  <li>runs from commman line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pyflakes/">pyflakes</a></p>
+
+<ul>
+  <li>simple linting tool that focuses on static errors</li>
+  <li>limited implementation of PEP8</li>
+  <li>does not check style convention, only errors</li>
+  <li>often used by other linters</li>
+  <li>runs from command line</li>
+</ul>
+
+<p><a href="https://pypi.org/project/pylint/">pylint</a></p>
+
+<ul>
+  <li>complex linting tool with many features</li>
+  <li>direct implementation of PEP8 with configuration options</li>
+  <li>provides static errors, style errors, and refactoring suggestions</li>
+  <li>can be extended with plugins for specific frameworks</li>
+  <li>runs from command line and integrates with text editor</li>
+</ul>
+
+<p><a href="https://pypi.org/project/yapf/">yapf</a></p>
+
+<ul>
+  <li>automatic Python formatter</li>
+  <li>configurable implementation of PEP8</li>
+  <li>intended to format code to project defined style</li>
+  <li>newer project that is still in alpha</li>
+  <li>runs from command line</li>
+</ul>
+
