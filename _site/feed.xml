@@ -1,6 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-03-07T16:40:51-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Notes On Half Guard</title><link href="http://localhost:4000/2023/02/15/notes-on-half-guard.html" rel="alternate" type="text/html" title="Notes On Half Guard" /><published>2023-02-15T00:00:00-06:00</published><updated>2023-02-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/02/15/notes-on-half-guard</id><content type="html" xml:base="http://localhost:4000/2023/02/15/notes-on-half-guard.html"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Notes On Side Control</title><link href="http://localhost:4000/2023/01/15/notes-on-side-control.html" rel="alternate" type="text/html" title="Notes On Side Control" /><published>2023-01-15T00:00:00-06:00</published><updated>2023-01-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/01/15/notes-on-side-control</id><content type="html" xml:base="http://localhost:4000/2023/01/15/notes-on-side-control.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Side_control">Side control</a> is a brutal pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can hunt for chokes, joint locks, or other positions. The bottom combatant has to defend from attacks and overcome the weight and friction to recover guard and stay in the fight.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-03-08T14:49:03-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Notes On Half Guard</title><link href="http://localhost:4000/2023/02/15/notes-on-half-guard.html" rel="alternate" type="text/html" title="Notes On Half Guard" /><published>2023-02-15T00:00:00-06:00</published><updated>2023-02-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/02/15/notes-on-half-guard</id><content type="html" xml:base="http://localhost:4000/2023/02/15/notes-on-half-guard.html"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Notes On Side Control</title><link href="http://localhost:4000/2023/01/15/notes-on-side-control.html" rel="alternate" type="text/html" title="Notes On Side Control" /><published>2023-01-15T00:00:00-06:00</published><updated>2023-01-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/01/15/notes-on-side-control</id><content type="html" xml:base="http://localhost:4000/2023/01/15/notes-on-side-control.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Side_control">Side control</a> is a strong pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can generate intense pressure, hunt for submissions, or transition other positions. The bottom combatant has to defend from attacks and overcome weight and friction to recover guard and stay in the fight. Getting caught in bottom side control as a white belt is a common and brutal experence. A basic understanding of the position mechanics is require…</p>
 
-<p>Below are a set of notes drafted from an excellent <a href="https://youtu.be/cuXq-k__9lQ">side control primer</a> with John Danaher and Bernardo Faria.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Side control is a brutal pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can hunt for chokes, joint locks, or other positions. The bottom combatant has to defend from attacks and overcome the weight and friction to recover guard and stay in the fight.]]></summary></entry><entry><title type="html">Python Linting Tools</title><link href="http://localhost:4000/2022/12/15/python-linting-tools.html" rel="alternate" type="text/html" title="Python Linting Tools" /><published>2022-12-15T00:00:00-06:00</published><updated>2022-12-15T00:00:00-06:00</updated><id>http://localhost:4000/2022/12/15/python-linting-tools</id><content type="html" xml:base="http://localhost:4000/2022/12/15/python-linting-tools.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Lint_(software)">Linting</a> is the process of analyzing code for syntax, structure, and style errors. Linting is a form of <a href="https://en.wikipedia.org/wiki/Static_program_analysis">static code analysis</a> that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality. Linters can be ran in a terminal and often integrate with text editors and IDEs.</p>
+<p>Below are a set of notes compiled from an excellent <a href="https://youtu.be/cuXq-k__9lQ">side control primer</a> by John Danaher and Bernardo Faria. The notes follow a loose format and serve to:</p>
+
+<ol>
+  <li>Solidify a conceptual understanding of side control</li>
+  <li>Define a basic approach for escaping side control</li>
+</ol>
+
+<h2 id="side-control-concepts">Side Control Concepts</h2>
+
+<ul>
+  <li>Side control is a stable pin due to perpindicular
+    <ul>
+      <li>Spine angle</li>
+      <li>Body position</li>
+    </ul>
+  </li>
+  <li>Many holds for stabilizing a side control pin
+    <ul>
+      <li>Knee to hip</li>
+      <li>Back under hook</li>
+      <li>Cross face</li>
+      <li><a href="https://en.wikipedia.org/wiki/Kesa-gatame">Kesa-gatame</a></li>
+    </ul>
+  </li>
+  <li>Components of side control pin
+    <ul>
+      <li>Use of limbs as wedges (primary)</li>
+      <li>Use of body weight (secondary)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The wedging of limbs against the bottom combantant is the basis of the side control pin. It creates inside control and inhibits movement. Body weight on its own cannot be used to maintain the pin. However, body weight can significantly reinforce wedges and create crushing pressure.</p>
+
+<h2 id="when-pinned-in-side-control">When Pinned in Side Control</h2>
+
+<ul>
+  <li>Goal for escape and recovery
+    <ul>
+      <li>Get inside opponent’s wedges</li>
+      <li>Defend arms and neck from submission</li>
+      <li>Block transition to mount or knee on belly</li>
+    </ul>
+  </li>
+  <li>Put knee in hip pocket
+    <ul>
+      <li>Defend and block</li>
+    </ul>
+  </li>
+  <li>Get near side elbow frame
+    <ul>
+      <li>Defend and block</li>
+    </ul>
+  </li>
+  <li>Shrimp outward and work knee into hip pocket
+    <ul>
+      <li>Keep foot pointed and above hip</li>
+    </ul>
+  </li>
+  <li>Elbow and knee join to from a strong “V” frame
+    <ul>
+      <li>Defend and block</li>
+    </ul>
+  </li>
+  <li>Join foot on inside foot and drive away with legs
+    <ul>
+      <li>Break open pin and create distance</li>
+    </ul>
+  </li>
+  <li>Fight to get head and hand inside crossface bicep
+    <ul>
+      <li>Defend and block</li>
+    </ul>
+  </li>
+  <li>Shift hips and knee under opponent
+    <ul>
+      <li>Spines are now aligned</li>
+      <li>Control is diminished</li>
+    </ul>
+  </li>
+  <li>Search for grips, hooks, and recover guard
+    <ul>
+      <li>Closed, half, or butterfly guard</li>
+      <li>Collar and sleeve</li>
+      <li>Under and over hooks</li>
+    </ul>
+  </li>
+</ul>
+
+<p>This sequence draws from the fundamental “knee elbow escape” series. The idea of connecting the inside knee with indside elbow to block the opponent and create distance can be applied to other forms of escape and guard recoveries. However, if an opponent successfully sets a strong side control pin it will take a combonation of technique, strength, and grit to overcome crushing forces and friction.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Side control is a strong pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can generate intense pressure, hunt for submissions, or transition other positions. The bottom combatant has to defend from attacks and overcome weight and friction to recover guard and stay in the fight. Getting caught in bottom side control as a white belt is a common and brutal experence. A basic understanding of the position mechanics is require…]]></summary></entry><entry><title type="html">Python Linting Tools</title><link href="http://localhost:4000/2022/12/15/python-linting-tools.html" rel="alternate" type="text/html" title="Python Linting Tools" /><published>2022-12-15T00:00:00-06:00</published><updated>2022-12-15T00:00:00-06:00</updated><id>http://localhost:4000/2022/12/15/python-linting-tools</id><content type="html" xml:base="http://localhost:4000/2022/12/15/python-linting-tools.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Lint_(software)">Linting</a> is the process of analyzing code for syntax, structure, and style errors. Linting is a form of <a href="https://en.wikipedia.org/wiki/Static_program_analysis">static code analysis</a> that occurs prior to code exuction at the program level. In practice linting can occur while code is edited, saved, or evaluated in a development workflow. The goal of linting is to minimize runtime errors and ensure code quality. Linters can be ran in a terminal and often integrate with text editors and IDEs.</p>
 
 <p>In Python linting standards are documented in the <a href="">PEP8 style guide</a> and implemented by an ecosystem of linting tools. Each tool has an opinionated interpretation of the standards and serves a specific role in the linting process. Understanding what each tool does and its relationship to other tools can be challenging.</p>
 
