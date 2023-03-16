@@ -6,7 +6,7 @@ kesa_link: https://en.wikipedia.org/wiki/Kesa-gatame
 
 ---
 
-[Side control]({{page.wiki_link}}) is a strong pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can generate intense pressure, hunt for submissions, or transition other positions. The bottom combatant has to defend from attacks and overcome weight and friction to recover guard and stay in the fight. Getting caught in bottom side control as a white belt is a common and brutal experence. A basic understanding of the position mechanics is require...
+[Side control]({{page.wiki_link}}) is a strong pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can generate intense pressure, hunt for submissions, or transition to other positions. The bottom combatant has to defend from attacks and overcome weight and friction to recover guard and stay in the fight. Getting caught in bottom side control as a white belt is a common and brutal experence. A basic understanding of the position mechanics is required to survive.
 
 Below are a set of notes compiled from an excellent [side control primer]({{page.yt_link}}) by John Danaher and Bernardo Faria. The notes follow a loose format and serve to:
 
