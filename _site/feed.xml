@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-03-16T16:15:20-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Notes On Half Guard</title><link href="http://localhost:4000/2023/02/15/notes-on-half-guard.html" rel="alternate" type="text/html" title="Notes On Half Guard" /><published>2023-02-15T00:00:00-06:00</published><updated>2023-02-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/02/15/notes-on-half-guard</id><content type="html" xml:base="http://localhost:4000/2023/02/15/notes-on-half-guard.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Half_guard">Half guard</a> is a common Jiu Jitsu position with a top combatant lying on top of the bottom combatant with one leg entangled. Half guard can be found when one combatant is attempting to escape a hold and recover guard. Half guard can also be found when transitioning from other guards.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-03-17T11:14:07-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rckwzrd’s Reference</title><subtitle>Matt Rhoads |</subtitle><entry><title type="html">Notes On Half Guard</title><link href="http://localhost:4000/2023/02/15/notes-on-half-guard.html" rel="alternate" type="text/html" title="Notes On Half Guard" /><published>2023-02-15T00:00:00-06:00</published><updated>2023-02-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/02/15/notes-on-half-guard</id><content type="html" xml:base="http://localhost:4000/2023/02/15/notes-on-half-guard.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Half_guard">Half guard</a> is a common Jiu Jitsu position with a top combatant lying on top of the bottom combatant with one leg entangled. Half guard can be found when one combatant is attempting to escape a hold and recover guard. Half guard can also be found when transitioning from other guards.</p>
 
 <p>Depending on grips and body position half guard can favor either the top or bottom combatant. This leads to a wide range of passes, sweeps, and submissions that can be executed by either player. Due to the range of entries and advantages held by both combatants half guard is an important position to understand.</p>
 
@@ -6,8 +6,81 @@
 
 <ol>
   <li>Contrast top and bottom half guard mechanics</li>
-  <li>Define a basic approach half guard bottom</li>
-</ol>]]></content><author><name></name></author><summary type="html"><![CDATA[Half guard is a common Jiu Jitsu position with a top combatant lying on top of the bottom combatant with one leg entangled. Half guard can be found when one combatant is attempting to escape a hold and recover guard. Half guard can also be found when transitioning from other guards.]]></summary></entry><entry><title type="html">Notes On Side Control</title><link href="http://localhost:4000/2023/01/15/notes-on-side-control.html" rel="alternate" type="text/html" title="Notes On Side Control" /><published>2023-01-15T00:00:00-06:00</published><updated>2023-01-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/01/15/notes-on-side-control</id><content type="html" xml:base="http://localhost:4000/2023/01/15/notes-on-side-control.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Side_control">Side control</a> is a strong pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can generate intense pressure, hunt for submissions, or transition to other positions. The bottom combatant has to defend from attacks and overcome weight and friction to recover guard and stay in the fight. Getting caught in bottom side control as a white belt is a common and brutal experence. A basic understanding of the position mechanics is required to survive.</p>
+  <li>Define a basic strategy for half guard bottom</li>
+</ol>
+
+<h2 id="half-guard-mechanics">Half Guard Mechanics</h2>
+
+<ul>
+  <li>Half guard top is a passing position</li>
+  <li>Half guard bottom is a sweeping position</li>
+  <li>High level of body contact between combatants
+    <ul>
+      <li>slows down speed of engagement</li>
+      <li>encourages controlled movements</li>
+    </ul>
+  </li>
+  <li>Half guard top can pin bottom
+    <ul>
+      <li>cross face wedge</li>
+      <li>head and shoulder control</li>
+    </ul>
+  </li>
+  <li>Head and shoulder control decides advantage
+    <ul>
+      <li>if top can pin bottom they can pass</li>
+      <li>if bottom can deny pin they can sweep</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="deny-control-in-half-guard-bottom">Deny Control in Half Guard Bottom</h2>
+
+<ul>
+  <li>Legs can only pull
+    <ul>
+      <li>harder to control distance</li>
+      <li>serve as a shield</li>
+    </ul>
+  </li>
+  <li>Arms have to stay engaged
+    <ul>
+      <li>fight for hooks</li>
+      <li>frame for distance</li>
+      <li>defend from attacks</li>
+    </ul>
+  </li>
+</ul>
+
+<ol>
+  <li>Knee shields frame and maintain distance
+    <ul>
+      <li>low hip knee shield</li>
+      <li>high shoulder knee shield</li>
+    </ul>
+  </li>
+  <li>Outer arm
+    <ul>
+      <li>underhook
+        <ul>
+          <li>block cross face wedge and pin</li>
+        </ul>
+      </li>
+      <li>over hook
+        <ul>
+          <li>block cross face wedge and pin</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Inner arm hand control
+    <ul>
+      <li>take away post and pin</li>
+    </ul>
+  </li>
+</ol>
+
+<p>The knee shield, outer arm hook, and inner arm hand control are the three key requirements for denying head and shoulder control. Maintaining all three requirements are critical for holding bottom advantage and finding a strong sweep against the top combatant. Lack of control in any combonation of requirements will lead to a pin and strong pass by the top combatant.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Half guard is a common Jiu Jitsu position with a top combatant lying on top of the bottom combatant with one leg entangled. Half guard can be found when one combatant is attempting to escape a hold and recover guard. Half guard can also be found when transitioning from other guards.]]></summary></entry><entry><title type="html">Notes On Side Control</title><link href="http://localhost:4000/2023/01/15/notes-on-side-control.html" rel="alternate" type="text/html" title="Notes On Side Control" /><published>2023-01-15T00:00:00-06:00</published><updated>2023-01-15T00:00:00-06:00</updated><id>http://localhost:4000/2023/01/15/notes-on-side-control</id><content type="html" xml:base="http://localhost:4000/2023/01/15/notes-on-side-control.html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Side_control">Side control</a> is a strong pin and fundamental Jiu Jitsu position. The top combatant holds the dominant position and can generate intense pressure, hunt for submissions, or transition to other positions. The bottom combatant has to defend from attacks and overcome weight and friction to recover guard and stay in the fight. Getting caught in bottom side control as a white belt is a common and brutal experence. A basic understanding of the position mechanics is required to survive.</p>
 
 <p>Below are a set of notes compiled from an excellent <a href="https://youtu.be/cuXq-k__9lQ">side control primer</a> by John Danaher and Bernardo Faria. The notes follow a loose format and serve to:</p>
 
