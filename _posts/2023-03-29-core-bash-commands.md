@@ -14,77 +14,86 @@ Many of these core commands are referenced in the linux guides that populate the
 - [Some Basic Unix Commands]({{page.basic-link}})
 - [The Linux Command Line, 5th Internet Edition]({{page.tlcl-link}})
 
-## getting help
+## Getting help
 
-- man: manual help about a command
-- apropos: search manual for help
+```
+man     # manual help about a command
+apropos # search manual for help
+```
 
-## interacting with directories
+## Interacting with directories
 
-- pwd: print working directory
-- ls: list files in current directory 
-- ls -alF: list files in long format
-- cd: chage directory
-- cd ..: move up one directory
-- pushd: push directory
-- popd: pop directory
-- mkdir: make a directory
-- mkdir -p: make a directory and parents
-- rmdir: remove an empty directory
-- rmdir -p: remove empty directory and parents
+```
+pwd      # print working directory
+ls:      # list files in current directory 
+ls -alF  # list files in long format
+cd       # change directory
+cd ..    # move up one directory
+pushd    # push directory
+popd     # pop directory
+mkdir    # make a directory
+mkdir -p # make a directory and parents
+rmdir    # remove an empty directory
+rmdir -p # remove empty directory and parents
+```
 
-## interacting with files
+## Interacting with files
 
-- cp: copy a file or directory
-- rm: remove a file
-- rm -rf: recursively remove all files and directories
-- mv: move a file or directory
-- less: page through a file
-- cat: print whole file
-- zip -r <dir>: zip a directory of files
-- unzip <.zip>: unzip files into current directory
-- gzip -kr <dir>: gzip a directory of files
-- gunzip <.gz>: unzip into current directory
-- curl -O <url>: download a file from URL and save as root name
+```
+cp             # copy a file or directory
+rm             # remove a file
+rm -rf         # recursively remove files and directories
+mv             # move a file or directory
+less           # page through a file
+cat            # print whole file
+zip -r <dir>   # zip a directory of files
+unzip <.zip>   # unzip files into current directory
+gzip -kr <dir> # gzip a directory of files
+gunzip <.gz>   # unzip into current directory
+curl -O <url>  # download a file from URL and save as root
+```
+## Finding and searching
 
-## finding and searching
+```
+history                  # print terminal command history
+grep <str> <files>       # search files for text
+find <dir> -name <file>  # search directory for file
+```
 
-- history: display terminal command history
-- grep <str><files>: search files for text
-- find <dir> -name <file>: search directory for file
+## Environment and arguements
 
-## environment and arguements
+```
+env    # look at environment variables
+export # set a new environment variable
+echo   # print arguements
+xargs  # execute arguements:
+```
 
-- env: look at environment variables
-- export: set a new environment variable
-- echo: print arguements
-- xargs: execute arguements:
+## Permissions and execution
 
-## permissions and execution
+```
+sudo             # super user do
+source <file>    # execute commands from file in current shell 
+chmod 644 <file> # change file permissions to read only
+chmod 755 <file> # change file permissions to executable
+chomd u+x <file> # make file executable for user
+chomd a-x <file> # remove file executable for user
+```
 
-- sudo: super user do
-- source <file>: execute commands from file in current shell 
-- chmod 644 <file>: change file permissions to read only
-- chmod 755 <file>: change file permissions to executable
-- chomd u+x <file>: make file executable for user
-- chomd a-x <file>: remove file executable for user
+## System and processes
 
-## system and processes
-
-- exit: exit shell
-- df: print free disk space
-- du: print directory disk usage
-- top: print system usage and processes
-- ps aux: list all running process with ID
-- kill -9 <id>: kill process with ID
-- apt update: download updates for all installed packages
-- apt upgrade: install updates for all installed packages
-- apt list: list available packages
-- apt install: install package
-- apt remove: uninstall package
-- apt purge: uninstall package and configuration
-- apt autoremove: uninstall unused dependancies
-
-
-
-
+```
+exit           # exit shell
+df             # print free disk space
+du             # print directory disk usage
+top            # print system usage and processes
+ps aux         # list all running process with ID
+kill -9 <id>   # kill process with ID
+apt update     # download updates for all installed packages
+apt upgrade    # install updates for all installed packages
+apt list       # list available packages
+apt install    # install package
+apt remove     # uninstall package
+apt purge      # uninstall package and configuration
+apt autoremove # uninstall unused dependancies
+```
