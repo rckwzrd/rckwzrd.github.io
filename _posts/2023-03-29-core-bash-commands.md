@@ -1,18 +1,17 @@
 ---
 layout: post
-basic-link: https://www.tjhsst.edu/~dhyatt/superap/unixcmd.html
 tlcl-link: https://linuxcommand.org/tlcl.php
 
 ---
 
-Something about how this is my obligatory linux command line reference. Work in a bash terminal in an almost daily basis. Here is a selection of the most common commands in my bash history. Due to there frequency I would consider them to be core and worth compiling here.
+The bash terminal is a central part of my workflow. It is time for some obligatory notes on what I would define as the *"core built in commands"*. These commands have been drawn from my shell history based on frequency and binned into the following categories:
 
-In no particular order here the core bash commands broken into categories.
-
-Many of these core commands are referenced in the linux guides that populate the internet. Two of my favorite resources are:
-
-- [Some Basic Unix Commands]({{page.basic-link}})
-- [The Linux Command Line, 5th Internet Edition]({{page.tlcl-link}})
+- Getting help
+- Interacting with directories
+- Intereacting with files
+- Finding and searching
+- Permissions and execution
+- System and processes
 
 ## Getting help
 
@@ -97,3 +96,4 @@ apt remove     # uninstall package
 apt purge      # uninstall package and configuration
 apt autoremove # uninstall unused dependancies
 ```
+
